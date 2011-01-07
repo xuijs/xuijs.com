@@ -1,0 +1,17 @@
+{
+  "name": "xuijs.com",
+  "description": "xuijs site",
+  "version": "0.0.0",
+  "author": "brianleroux <brian@nitobi.com> (westcoastlogic.com)",
+  "main": "server",
+  "directories": {
+    "lib": ""
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies":{
+    "express":"",
+    "ejs":""
+  }
+}
