@@ -1,22 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>joDoc</title>
-<meta name="generator" content="joDoc">
-<link rel="stylesheet" type="text/css" href="docbody.css">
-<link rel="stylesheet" type="text/css" href="doc.css">
-<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
-<meta name="format-detection" content="false">
-</head>
-<body>
+
 <h1><a name="Event">Event</a></h1>
 
-<p>A good old fashioned event handling system.</p>
+<p>A good old fashioned yet new skool event handling system.</p>
+
+<ul>
+<li>click</li>
+<li>load</li>
+<li>touchstart</li>
+<li>touchmove</li>
+<li>touchend</li>
+<li>touchcancel</li>
+<li>gesturestart</li>
+<li>gesturechange</li>
+<li>gestureend</li>
+<li>orientationchange</li>
+</ul>
 
 <h2>on</h2>
 
-<p>Registers a callback function to a <a href="js_dom.js.html#DOM">DOM</a> event on the element collection.</p>
+<p>Registers a callback function to a <a href="dom#DOM">DOM</a> event on the element collection.</p>
 
 <p>For more information see:</p>
 
@@ -83,7 +85,7 @@ x$('button').un('click'); // No more callbacks fired on click of button elements
 <pre><code>var funk = function() { alert('yo!'); }
 x$('button').on('click', funk); // callback subscribed to click.
 x$('button').on('click', function(){ alert('hi!'); });
-   x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
+x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
 </code></pre>
 
 <h2>fire</h2>
@@ -106,24 +108,7 @@ x$('button').on('click', function(){ alert('hi!'); });
 
 <h3>example</h3>
 
-<p>EXAMPLE HERE AHHHH</p>
+<pre><code>   x$('button#reset').fire('click', {died:true});
+   x$('.target').fire('touchstart');
+</code></pre>
 
-<h2>Events</h2>
-
-<p>A good new skool fashioned event handling system.</p>
-
-<ul>
-<li>click</li>
-<li>load</li>
-<li>touchstart</li>
-<li>touchmove</li>
-<li>touchend</li>
-<li>touchcancel</li>
-<li>gesturestart</li>
-<li>gesturechange</li>
-<li>gestureend</li>
-<li>orientationchange</li>
-</ul>
-
-</body>
-</html>

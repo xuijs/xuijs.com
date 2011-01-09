@@ -7,12 +7,8 @@ min:
 # i recognize this could be better...
 # the only thing better than better is being done
 copy-docs:
-	cp ./../xui/doc/base.js.html 	 ./views/basics.ejs
-	cp ./../xui/doc/js_dom.js.html 	 ./views/dom.ejs 
-	cp ./../xui/doc/js_event.js.html ./views/event.ejs
-	cp ./../xui/doc/js_fx.js.html    ./views/fx.ejs
-	cp ./../xui/doc/js_style.js.html ./views/style.ejs
-	cp ./../xui/doc/js_xhr.js.html   ./views/xhr.ejs
+	mkdir -p ./views/docs
+	cp ./../xui/doc/ejs/* ./views/docs
 
 copy-downloads:
 	cp ./../xui/lib/xui-2.0.0.js 		./public/downloads/xui-2.0.0.js	
