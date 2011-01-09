@@ -14,4 +14,13 @@ copy-docs:
 	cp ./../xui/doc/js_style.js.html ./views/style.ejs
 	cp ./../xui/doc/js_xhr.js.html ./views/xhr.ejs
 
+copy-downloads:
+	cp ./../xui/lib/xui-2.0.0.js ./public/downloads/xui-2.0.0.js	
+	cp ./../xui/lib/xui-2.0.0.min.js	./public/downloads/xui-2.0.0.min.js
+	cp ./../xui/lib/xui-bb-2.0.0.js		./public/downloads/xui-bb-2.0.0.js
+	cp ./../xui/lib/xui-bb-2.0.0.min.js	./public/downloads/xui-bb-2.0.0.min.js
+	cp ./../xui/lib/xui-ie-2.0.0.js		./public/downloads/xui-ie-2.0.0.js
+	cp ./../xui/lib/xui-ie-2.0.0.min.js ./public/downloads/xui-ie-2.0.0.min.js
+
+
 .PHONY: all 
