@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>joDoc</title>
+<meta name="generator" content="joDoc">
+<link rel="stylesheet" type="text/css" href="docbody.css">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+<meta name="format-detection" content="false">
+</head>
+<body>
+<h1><a name="Effects">Effects</a></h1>
+
+<p>Animations, transforms and transitions for getting the most out of hardware accelerated CSS.</p>
+
+<h2>Tween</h2>
+
+<p>Tween is a method for transforming a css property to a new value.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$(selector).tween(obj, callback);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>properties: object an object literal of element css properties to tween or an array containing object literals of css properties to tween sequentially.</li>
+<li>callback (optional): function to run when the animation is complete</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('#box').tween({ left:'100px', backgroundColor:'blue' });
+x$('#box').tween({ left:'100px', backgroundColor:'blue' }, function() { alert('done!'); });
+x$('#box').tween([{ left:'100px', backgroundColor:'green', duration:.2 }, { right:'100px' }]);
+</code></pre>
+
+</body>
+</html>

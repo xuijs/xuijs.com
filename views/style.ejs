@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>joDoc</title>
+<meta name="generator" content="joDoc">
+<link rel="stylesheet" type="text/css" href="docbody.css">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+<meta name="format-detection" content="false">
+</head>
+<body>
+<h1><a name="Style">Style</a></h1>
+
+<p>Anything related to how things look. Usually, this is CSS.</p>
+
+<h2>setStyle</h2>
+
+<p>Sets a single CSS property to a new value.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$(selector).setStyle(property, value);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>property:string the property to modify</li>
+<li>value:string the property value to set</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('.txt').setStyle('color', '#000');
+</code></pre>
+
+<h2>getStyle</h2>
+
+<p>Retuns a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$(selector).getStyle(property, callback);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>property:string a css key (for example, border-color NOT borderColor)</li>
+<li>callback:function (optional) a method to call on each element in the collection </li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('ul#nav li.trunk').getStyle('font-size');
+
+x$('a.globalnav').getStyle( 'background', function(prop){ prop == 'blue' ? 'green' : 'blue' });
+</code></pre>
+
+<h2>addClass</h2>
+
+<p>Adds the classname to all the elements in the collection.</p>
+
+<h3>syntax</h3>
+
+<pre><code>$(selector).addClass(className);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>className:string the name of the CSS class to apply</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>$('.foo').addClass('awesome');
+</code></pre>
+
+<h2>hasClass</h2>
+
+<p>Checks to see if classname is one the element. If a callback isn't passed, hasClass expects only one element in collection - but should it?</p>
+
+<h3>syntax</h3>
+
+<pre><code>$(selector).hasClass('className');
+$(selector).hasClass('className', function(element) {});
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>className:string the name of the CSS class to apply</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>$('#foo').hasClass('awesome'); // returns true or false
+$('.foo').hasClass('awesome',function(e){}); // returns XUI object
+</code></pre>
+
+<h2>removeClass</h2>
+
+<p>Removes the classname from all the elements in the collection.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$(selector).removeClass(className);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>className:string the name of the CSS class to remove.</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('.bar').removeClass('awesome');
+</code></pre>
+
+<h2>css</h2>
+
+<p>Set a number of CSS properties at once.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$(selector).css(object);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>an object literal of css key/value pairs to set.</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('h2.fugly').css({ backgroundColor:'blue', color:'white', border:'2px solid red' });
+</code></pre>
+
+</body>
+</html>

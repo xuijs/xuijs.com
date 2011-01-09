@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>joDoc</title>
+<meta name="generator" content="joDoc">
+<link rel="stylesheet" type="text/css" href="docbody.css">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+<meta name="format-detection" content="false">
+</head>
+<body>
+<h1><a name="Event">Event</a></h1>
+
+<p>A good old fashioned event handling system.</p>
+
+<h2>on</h2>
+
+<p>Registers a callback function to a <a href="js_dom.js.html#DOM">DOM</a> event on the element collection.</p>
+
+<p>For more information see:</p>
+
+<ul>
+<li>http://developer.apple.com/webapps/docs/documentation/AppleApplications/Reference/SafariWebContent/HandlingEvents/chapter<em>7</em>section<em>1.html#//apple</em>ref/doc/uid/TP40006511-SW1</li>
+</ul>
+
+<h3>syntax</h3>
+
+<pre><code>x$('button').on( 'click', function(e){ alert('hey that tickles!') });
+</code></pre>
+
+<p>or...</p>
+
+<pre><code>x$('a.save').click(function(e){ alert('tee hee!') });
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>type:string the event to subscribe to click|load|etc</li>
+<li>fn:function a callback function to execute when the event is fired</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$(window).load(function(e){
+  x$('.save').touchstart( function(evt){ alert('tee hee!') }).css(background:'grey');
+});
+</code></pre>
+
+<h2>un</h2>
+
+<p>Unregisters a specific callback, or if no specific callback is passed in, 
+unregisters all event callbacks of a specific type.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$('button').un('click', specificCallback);
+</code></pre>
+
+<p>The above unregisters only the <code>specificCallback</code> function on all button elements.</p>
+
+<pre><code>x$('button').un('click');
+</code></pre>
+
+<p>The above unregisters all callbacks assigned to all button elements.</p>
+
+<h3>arguments</h3>
+
+<ul>
+<li>type:string the event to unsubscribe from click|load|etc</li>
+<li>fn:function callback function to unsubscribe (optional)</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('button').on('click',function(){alert('hi!');}); // callback subscribed to click.
+x$('button').un('click'); // No more callbacks fired on click of button elements!
+</code></pre>
+
+<p>or ...</p>
+
+<pre><code>var funk = function() { alert('yo!'); }
+x$('button').on('click', funk); // callback subscribed to click.
+x$('button').on('click', function(){ alert('hi!'); });
+   x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
+</code></pre>
+
+<h2>fire</h2>
+
+<p>Fires a specific event on the xui collection.</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$('button').fire('click', {some:'data'});
+</code></pre>
+
+<p>Fires an event with some specific data attached to the event's <code>data</code> property.</p>
+
+<h3>arguments</h3>
+
+<ul>
+<li>type:string the event to fire, click|load|etc</li>
+<li>data:object JavaScript object to attach to the event's <code>data</code> property.</li>
+</ul>
+
+<h3>example</h3>
+
+<p>EXAMPLE HERE AHHHH</p>
+
+<h2>Events</h2>
+
+<p>A good new skool fashioned event handling system.</p>
+
+<ul>
+<li>click</li>
+<li>load</li>
+<li>touchstart</li>
+<li>touchmove</li>
+<li>touchend</li>
+<li>touchcancel</li>
+<li>gesturestart</li>
+<li>gesturechange</li>
+<li>gestureend</li>
+<li>orientationchange</li>
+</ul>
+
+</body>
+</html>

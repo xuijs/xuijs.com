@@ -31,4 +31,8 @@ app.get('/license', function (req, res) {
     res.render('license.html.ejs')
 })
 
+app.get('/docs/:doc', function (req, res) {
+    res.render(req.params.doc + '.ejs') 
+})
+
 app.listen(80)

@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>joDoc</title>
+<meta name="generator" content="joDoc">
+<link rel="stylesheet" type="text/css" href="docbody.css">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+<meta name="format-detection" content="false">
+</head>
+<body>
+<h1><a name="XHR">XHR</a></h1>
+
+<p>Remoting methods and utils.</p>
+
+<h2><a href="js_xhr.js.html#XHR">XHR</a></h2>
+
+<p>The classic Xml Http Request sometimes also known as the Greek God: Ajax. Not to be confused with AJAX the cleaning agent.
+This method has a few new tricks. It is always invoked on an element collection and follows the identical behaviour as the
+<code>html</code> method. If there no callback is defined the response text will be inserted into the elements in the collection.</p>
+
+<h3>syntax</h3>
+
+<pre><code>xhr(location, url, options)
+</code></pre>
+
+<p>or this method will accept just a url with a default behavior of inner...</p>
+
+<pre><code>xhr(url, options);
+</code></pre>
+
+<h3>options</h3>
+
+<ul>
+<li>method {String} [get|put|delete|post] Defaults to 'get'.</li>
+<li>async {Boolen} Asynchronous request. Defaults to false.</li>
+<li>data {String} A url encoded string of parameters to send.</li>
+<li>callback {Function} Called on 200 status (success)</li>
+</ul>
+
+<h3>response</h3>
+
+<ul>
+<li>The response available to the callback function as 'this', it is not passed in.</li>
+<li><code>this.reponseText</code> will have the resulting data from the file.</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>x$('#status').xhr('inner', '/status.html');
+x$('#status').xhr('outer', '/status.html');
+x$('#status').xhr('top',   '/status.html');
+x$('#status').xhr('bottom','/status.html');
+x$('#status').xhr('before','/status.html');
+x$('#status').xhr('after', '/status.html');
+</code></pre>
+
+<p>or</p>
+
+<pre><code>x$('#status').xhr('/status.html');
+
+x$('#left-panel').xhr('/panel', {callback:function(){ alert("All Done!") }});
+
+x$('#left-panel').xhr('/panel', function(){ alert(this.responseText) });
+</code></pre>
+
+</body>
+</html>
