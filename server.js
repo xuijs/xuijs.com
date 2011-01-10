@@ -14,7 +14,9 @@ app.get('/license', function (req, res) {
 
 app.get('/docs/:doc?', function (req, res) {
    var doc = req.params.doc || 'index'
-   res.render('docs/' + doc + '.ejs')
+   res.render('docs/' + doc + '.ejs', {
+      locals: { type: 'docs' }
+   })
 })
 
 app.listen(80)

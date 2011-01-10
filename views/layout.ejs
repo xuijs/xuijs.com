@@ -4,11 +4,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
     <title>xui.js - a simple javascript library for building mobile web applications.</title> 
     <link rel="stylesheet" type="text/css" media="screen" href="/grid.min.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="/app.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="/prettify.css" />
-    <script type="text/javascript" src="/prettify.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="/app.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/prettify.min.css" />
+    <script type="text/javascript" src="/downloads/xui-2.0.0.min.js"></script>
+    <script type="text/javascript" src="/prettify.min.js"></script>
+    <script type="text/javascript">
+        function prettyPrintMarkup() {
+            x$('pre, code').addClass('prettyprint');
+        }
+    </script>
 </head> 
-<body onload="prettyPrint();">
+<body onload="prettyPrintMarkup();prettyPrint();">
     <article>
         <header class="container_12">
             <div class="grid_2">
@@ -50,7 +56,16 @@
             <div class="clear">&nbsp;</div>
         </header>
 
-        <section class="container_12">
+        <%
+            // Allow the content to define a custom class
+            // The content must always use 'container_12'
+            var classes = [ 'container_12' ];
+            if (typeof type != 'undefined') {
+                classes.push(type);
+            }
+        %>
+
+        <section class="<%= classes.join(' ') %>">
             <%- body %>
 
             <div class="clear">&nbsp;</div>
