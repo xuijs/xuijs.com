@@ -114,6 +114,12 @@ section ul.no-indent {
  * ---- */
 
 .docs h1,
+.docs h2,
+.docs h3 {
+  text-transform:none;
+}
+
+.docs h1,
 .docs h1 a {
   color:inherit;
   font-size:36px;
