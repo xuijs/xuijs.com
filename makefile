@@ -18,9 +18,9 @@ copy-downloads:
 	cp ./../xui/lib/xui-ie-2.0.0.js		./public/downloads/xui-ie-2.0.0.js
 	cp ./../xui/lib/xui-ie-2.0.0.min.js ./public/downloads/xui-ie-2.0.0.min.js
 
+# warning: do not copy submodules around! that REALLY fucks up git
 copy-tests:
-	cp -r ./../xui/spec 		  ./public/tests/tests
-	cp -r ./../xui/packages/qunit ./public/tests/packages/qunit
-	cp -r ./../xui/lib/ 		  ./public/tests/lib
+	cp -r ./../xui/spec ./public/tests/tests
+	cp -r ./../xui/lib  ./public/tests/lib
 
 .PHONY: all 
