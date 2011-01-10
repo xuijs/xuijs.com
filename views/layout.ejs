@@ -2,85 +2,77 @@
 <html> 
 <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    <title>XUIJS - A simple javascript framework for building mobile web applications.</title> 
-    <link href="/app.min.css" media="screen" rel="stylesheet"type="text/css"/>
-    <style type="text/css">
-    ul, li {
-        margin:0;
-        padding:0;
-    }
- 
-    li { margin: 0 0 0 20px; } 
-
-    h1 {
-        margin:0;
-    } 
-
-    h2 {
-        margin: 5px 0 0 0;
-    } 
-
-    .globalnav ul li {
-        list-style:none;
-        margin:0;
-        padding:0;
-    }
-
-    a {
-        text-decoration:none;
-    }
-
-    a:hover {
-        text-decoration:underline;
-    }
-
-    </style>
-    <link href="/prettify.css" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" src="/prettify.js"></script>
+    <title>xui.js - a simple javascript library for building mobile web applications.</title> 
+    <link rel="stylesheet" type="text/css" media="screen" href="/grid.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/app.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/prettify.min.css" />
+    <script type="text/javascript" src="/downloads/xui-2.0.0.min.js"></script>
+    <script type="text/javascript" src="/prettify.min.js"></script>
+    <script type="text/javascript">
+        function prettyPrintMarkup() {
+            x$('pre, code').addClass('prettyprint');
+        }
+    </script>
 </head> 
-<body onload="prettyPrint()"> 
-<div class="container container_12">
+<body onload="prettyPrintMarkup();prettyPrint();">
+    <!-- FireFox / Opera: article must use container_12 -->
+    <article class="container_12">
+        <header class="container_12">
+            <div class="grid_2">
+                <h1><a href="/">XUI</a></h1>
+            </div>
 
-<h1 class="grid_1"><a href="/">xuijs</a></h1>
-<h1 class="grid_1">&nbsp;</h1>
+            <div class="grid_2 suffix_1">
+                <h2>The Code</h2>
+                <ul>
+                    <li><a href="/downloads">Downloads</a></li>
+                    <li><a href="http://github.com/xui/xui-plugins">Plugins</a></li>
+                    <li><a href="/tests/tests/index.html">Test Suite</a></li>
+                    <li><a href="/license">License</a></li>
+                </ul>
+            </div>
 
-<div class="grid_2 globalnav">
-    <h2>code</h2>
-    <ul>
-        <li><a href="/downloads">downloads</a></li>
-        <li><a href="http://github.com/xui/xui-plugins">plugins on github</a></li>
-        <li><a href="/tests/tests/index.html">run the tests</a></li>
-        <li><a href="/license">mit license</a></li>
-    </ul>
-</div>
+            <div class="grid_2 suffix_1">
+                <h2>Documentation</h2>
+                <ul>
+                    <li><a href="/docs/basics">Basics</a></li>
+                    <li><a href="/docs/dom">DOM</a></li>
+                    <li><a href="/docs/event">Events</a></li>
+                    <li><a href="/docs/fx">Fx</a></li>
+                    <li><a href="/docs/style">Style</a></li>
+                    <li><a href="/docs/xhr">XHR</a></li>
+                </ul>
+            </div>
 
-<div class="grid_2 globalnav">
-    <h2>docs</h2>
-    <ul>
-        <li><a href="/docs/basics">basics</a></li>
-        <li><a href="/docs/dom">dom</a></li>
-        <li><a href="/docs/event">events</a></li>
-        <li><a href="/docs/fx">fx</a></li>
-        <li><a href="/docs/style">style</a></li>
-        <li><a href="/docs/xhr">xhr</a></li>
-    </ul>    
-</div>
+            <div class="grid_2 suffix_2">
+                <h2>Community</h2>
+                <ul>
+                    <li><a href="http://github.com/xui/xui">GitHub</a></li>
+                    <li><a href="https://github.com/xui/xui/issues">Bug Reports</a></li>
+                    <li><a href="irc://irc.freenode.net/phonegap">#phonegap</a></li>
+                    <li><a href="http://groups.google.com/group/phonegap">Mailing List</a></li>
+                </ul>
+            </div>
 
-<div class="grid_2 globalnav">
-    <h2>community</h2>
-    <ul>
-        <li><a href="http://github.com/xui/xui">contribute on github</a></li>
-        <li><a href="https://github.com/xui/xui/issues">report a bug</a></li>
-        <li><a href="irc://irc.freenode.net/phonegap">#phonegap irc</a></li>
-        <li><a href="http://groups.google.com/group/phonegap">mailing list</a></li>
-    </ul>
-</div>
-<div class="grid_4">&nbsp;</div>
+            <div class="clear">&nbsp;</div>
+        </header>
 
-<div class="clear">&nbsp;</div> 
+        <%
+            // Allow the content to define a custom class
+            // The content must always use 'container_12'
+            var classes = [ 'container_12' ];
+            if (typeof type != 'undefined') {
+                classes.push(type);
+            }
+        %>
 
-<%- body %>
+        <section class="<%= classes.join(' ') %>">
+            <%- body %>
 
-<div class="clear">&nbsp;</div> 
+            <div class="clear">&nbsp;</div>
+        </section>
+    </article>
+
+    <a href="http://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/4c7dc970b89fd04b81c8e221ba88ff99a06c6b61?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>
 </body> 
 </html>

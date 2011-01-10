@@ -2,7 +2,10 @@ deploy:
 	git push joyent master
 
 min:
-	java -jar ~/Repo/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/app.css -o ./public/app.min.css
+	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/grid.css -o ./public/grid.min.css
+	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/app.css -o ./public/app.min.css
+	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/prettify.css -o ./public/prettify.min.css
+	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/prettify.js -o ./public/prettify.min.js
 
 # i recognize this could be better...
 # the only thing better than better is being done
