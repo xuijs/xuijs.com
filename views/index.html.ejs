@@ -1,7 +1,14 @@
 <div class="grid_2"><h4>about</h4></div>
 
 <div class="grid_10"> 
-    <p>A super micro tiny DOM framework for authoring mobile web applications. Proven across thousands of apps in stores and on the open web. Everything you need to author a mobile web applications and <em>nothing you don't</em>. XUI is the minimum framework you need to build a modern HTML5 mobile web application that gracefully degrades to older devices. And because the footprint is so small that means faster loading times, quicker initialization and more room for your app logic.</p> 
+    <p>A super micro tiny DOM framework for authoring mobile web applications. Proven across thousands of apps in stores and on the open web. Everything you need to author a mobile web applications and <em>nothing you don't</em>. XUI is the minimum framework you need to build a modern HTML5 mobile web application that gracefully degrades to older devices. And because the footprint is so small that means faster loading times, quicker initialization and more room for your app logic.</p>
+    <pre>
+    // a trivial example
+    x$('#btn').submit(function(e){
+        x$(this).disable();
+        x$('#msg').html('Thanks for your submission!');
+    })
+    </pre> 
 </div>
 
 <div class="grid_2"><h4>features</h4></div>
