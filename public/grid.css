@@ -15,6 +15,11 @@
     width: 960px;
 }
 
+/* Allow FireFox and Opera to render the floats correctly. */
+article.container_12 {
+  display:block;
+}
+
 /* Grid >> Global
 ----------------------------------------------------------------------------------------------------*/
 
