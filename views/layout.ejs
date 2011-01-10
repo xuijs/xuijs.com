@@ -4,55 +4,57 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
     <title>xui.js - a simple javascript library for building mobile web applications.</title> 
     <link rel="stylesheet" type="text/css" media="screen" href="/grid.min.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="/app.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/app.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="/prettify.css" />
     <script type="text/javascript" src="/prettify.js"></script>
 </head> 
 <body onload="prettyPrint();">
-    <div class="container_12">
+    <article>
+        <header class="container_12">
+            <div class="grid_2">
+                <h1><a href="/">XUI</a></h1>
+            </div>
 
-        <div class="grid_2">
-            <h1><a href="/">XUI</a></h1>
-        </div>
+            <div class="grid_2 suffix_1">
+                <h2>The Code</h2>
+                <ul>
+                    <li><a href="/downloads">Downloads</a></li>
+                    <li><a href="http://github.com/xui/xui-plugins">Plugins</a></li>
+                    <li><a href="/tests/tests/index.html">Test Suite</a></li>
+                    <li><a href="/license">License</a></li>
+                </ul>
+            </div>
 
-        <div class="grid_2 globalnav">
-            <h2>Code</h2>
-            <ul>
-                <li><a href="/downloads">Downloads</a></li>
-                <li><a href="http://github.com/xui/xui-plugins">Plugins</a></li>
-                <li><a href="/tests/tests/index.html">Test Suite</a></li>
-                <li><a href="/license">License</a></li>
-            </ul>
-        </div>
+            <div class="grid_2 suffix_1">
+                <h2>Documentation</h2>
+                <ul>
+                    <li><a href="/docs/basics">Basics</a></li>
+                    <li><a href="/docs/dom">DOM</a></li>
+                    <li><a href="/docs/event">Events</a></li>
+                    <li><a href="/docs/fx">Fx</a></li>
+                    <li><a href="/docs/style">Style</a></li>
+                    <li><a href="/docs/xhr">XHR</a></li>
+                </ul>
+            </div>
 
-        <div class="grid_2 globalnav">
-            <h2>Docs</h2>
-            <ul>
-                <li><a href="/docs/basics">Basics</a></li>
-                <li><a href="/docs/dom">DOM</a></li>
-                <li><a href="/docs/event">Events</a></li>
-                <li><a href="/docs/fx">Fx</a></li>
-                <li><a href="/docs/style">Style</a></li>
-                <li><a href="/docs/xhr">XHR</a></li>
-            </ul>
-        </div>
+            <div class="grid_2 suffix_2">
+                <h2>Community</h2>
+                <ul>
+                    <li><a href="http://github.com/xui/xui">GitHub</a></li>
+                    <li><a href="https://github.com/xui/xui/issues">Bug Reports</a></li>
+                    <li><a href="irc://irc.freenode.net/phonegap">#phonegap</a></li>
+                    <li><a href="http://groups.google.com/group/phonegap">Mailing List</a></li>
+                </ul>
+            </div>
 
-        <div class="grid_2 suffix_4 globalnav">
-            <h2>Community</h2>
-            <ul>
-                <li><a href="http://github.com/xui/xui">GitHub</a></li>
-                <li><a href="https://github.com/xui/xui/issues">Bug Reports</a></li>
-                <li><a href="irc://irc.freenode.net/phonegap">#phonegap</a></li>
-                <li><a href="http://groups.google.com/group/phonegap">Mailing List</a></li>
-            </ul>
-        </div>
+            <div class="clear">&nbsp;</div>
+        </header>
 
-        <div class="clear">&nbsp;</div>
+        <section class="container_12">
+            <%- body %>
 
-        <%- body %>
-
-        <div class="clear">&nbsp;</div>
-
-    </div>
+            <div class="clear">&nbsp;</div>
+        </section>
+    </article>
 </body> 
 </html>
