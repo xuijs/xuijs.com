@@ -20,7 +20,7 @@ copy-downloads:
 
 copy-tests:
 	cp -r ./../xui/spec 		  ./public/tests/tests
-	cp -r ./../xui/packages/qunit ./public/tests/packages
+	cp -r ./../xui/packages/qunit ./public/tests/packages/qunit
 	cp -r ./../xui/lib/ 		  ./public/tests/lib
 
 .PHONY: all 
