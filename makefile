@@ -3,6 +3,7 @@ deploy:
 
 min:
 	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/grid.css -o ./public/grid.min.css
+	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/app.css -o ./public/app.min.css
 
 # i recognize this could be better...
 # the only thing better than better is being done
