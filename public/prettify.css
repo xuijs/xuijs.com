@@ -30,15 +30,15 @@ pre {
   -moz-box-shadow:#AAA 0px 0px 15px;
   -webkit-box-shadow:#AAA 0px 0px 15px;
   box-shadow:#AAA 0px 0px 15px;
-  line-height:1.3em;
-  padding:5px 10px;
+  line-height:1.5em;
+  padding:15px 20px;
 }
 
 code {
   -moz-border-radius:2px;
   -webkit-border-radius:2px;
   border-radius:2px;
-  padding:2px 4px;
+  padding:2px 6px;
 }
 
 /* Specify class=linenums on a pre to get line numbering */
