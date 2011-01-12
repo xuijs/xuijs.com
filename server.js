@@ -1,4 +1,5 @@
 var app = require('./config').app
+var port = process.env.PORT || 4000
 
 app.get('/', function (req, res) {
     res.render('index.html.ejs')
@@ -19,4 +20,5 @@ app.get('/docs/:doc?', function (req, res) {
    })
 })
 
-app.listen(80)
+app.listen(port)
+console.log("listening on port " + port)
