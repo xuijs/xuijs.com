@@ -3,11 +3,10 @@
  * ------------ */
 
 body {
-  background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ECE9E9));
-  background:-moz-linear-gradient(center top, white 0%, #ECE9E9 100%);
+  background-attachment:fixed;
+  background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ECE9E9));
+  background-image:-moz-linear-gradient(center top, white 0%, #ECE9E9 100%);
   font-family:Georgia, serif;
-  margin:0px;
-  padding:0px;
   text-transform:lowercase;
 }
 
