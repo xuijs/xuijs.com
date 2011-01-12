@@ -20,8 +20,8 @@ a {
   text-decoration:none;
 }
 
-a:hover {
-  text-decoration:underline;
+a:hover, a.current {
+  text-decoration: underline;
 }
 
 h1,

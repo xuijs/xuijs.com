@@ -1,3 +1,10 @@
+<% 
+  function isCurrent(current, page){
+    if(current == page){
+      return "class='current'";
+    }
+  }
+%> 
 <!DOCTYPE html> 
 <html> 
 <head> 
@@ -36,22 +43,21 @@
             <div class="grid_2 suffix_1">
                 <h2>The Code</h2>
                 <ul>
-                    <li><a href="/downloads">Downloads</a></li>
+                    <li><a <%- isCurrent(current, "downloads") %> href="/downloads">Downloads</a></li>
                     <li><a href="http://github.com/xui/xui-plugins">Plugins</a></li>
                     <li><a href="/tests/tests/index.html">Test Suite</a></li>
-                    <li><a href="/license">License</a></li>
+                    <li><a <%- isCurrent(current, "license") %> href="/license">License</a></li>
                 </ul>
             </div>
-
             <div class="grid_2 suffix_1">
                 <h2>Documentation</h2>
                 <ul>
-                    <li><a href="/docs/basics">Basics</a></li>
-                    <li><a href="/docs/dom">DOM</a></li>
-                    <li><a href="/docs/event">Events</a></li>
-                    <li><a href="/docs/fx">Fx</a></li>
-                    <li><a href="/docs/style">Style</a></li>
-                    <li><a href="/docs/xhr">XHR</a></li>
+                    <li><a <%- isCurrent(current, "basics") %> href="/docs/basics">Basics</a></li>
+                    <li><a <%- isCurrent(current, "dom") %> href="/docs/dom">DOM</a></li>
+                    <li><a <%- isCurrent(current, "event") %> href="/docs/event">Event</a></li>
+                    <li><a <%- isCurrent(current, "fx") %> href="/docs/fx">Fx</a></li>
+                    <li><a <%- isCurrent(current, "style") %> href="/docs/style">Style</a></li>
+                    <li><a <%- isCurrent(current, "xhr") %> href="/docs/xhr">XHR</a></li>
                 </ul>
             </div>
 
