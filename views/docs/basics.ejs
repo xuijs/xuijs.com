@@ -1,7 +1,18 @@
 
-<h1><a name="Base">Base</a></h1>
+<h1><a name="Basics">Basics</a></h1>
 
 <p>Includes functionality used to manipulate the xui object collection; things like iteration and set operations are included here.</p>
+
+<ul>
+<li>extend</li>
+<li>find</li>
+<li>set</li>
+<li>reduce</li>
+<li>has</li>
+<li>filter</li>
+<li>not</li>
+<li>each</li>
+</ul>
 
 <h2>extend</h2>
 
@@ -54,7 +65,7 @@ var l = x$( '.differentClass' ).last();
 
 <ul>
 <li>selector:string a CSS selector string to match elements to.</li>
-<li>context:HTMLElement an html element to use as the "root" element to search from.</li>
+<li>context:HTMLElement a HTML element to use as the "root" element to search from.</li>
 </ul>
 
 <h3>example</h3>
@@ -73,7 +84,7 @@ var l = x$( '.differentClass' ).last();
 
 <p>We can select only specific list items by using <code>find</code>, as opposed to selecting off the document root:</p>
 
-<pre><code>x$('li'); // returns all four list item elements.
+<pre><code>x$('li');                 // returns all four list item elements.
 x$('#second').find('li'); // returns list items "three" and "four"
 </code></pre>
 
@@ -133,7 +144,7 @@ x$('#second').find('li'); // returns list items "three" and "four"
 
 <p>We can use xui like so</p>
 
-<pre><code>var divs = x$('div'); // we've got all four divs from above.
+<pre><code>var divs = x$('div');              // we've got all four divs from above.
 var someDivs = divs.has('.gotit'); // we've now got only the two divs with the class
 </code></pre>
 
@@ -191,8 +202,8 @@ and the index passed in as a parameter.</p>
 
 <p>We can use xui like so</p>
 
-<pre><code>var divs = x$('div'); // we've got all four divs from above.
-var someDivs = divs.not('.gotit'); // we've now got only the two divs _without_ the class "gotit"
+<pre><code>var divs = x$('div');              // we've got all four divs from above.
+var someDivs = divs.not('.gotit'); // we've now got only the two divs without the class "gotit"
 </code></pre>
 
 <h2>each</h2>
