@@ -1,11 +1,10 @@
-
 (function () {
-
 /**
 	Base
 	====
 
 	Includes functionality used to manipulate the xui object collection; things like iteration and set operations are included here.
+
 */
 var undefined,
     xui,
@@ -348,7 +347,7 @@ xui.fn = xui.prototype = {
 	### example ###
 
 		x$(someSelector).each(function(element, index, xui) {
-		    alert("Here's the " + index + " element: "+ element);
+		    alert("Here's the " + index + " element: " + element);
 		});	
 */
     each: function(fn) {
@@ -369,7 +368,9 @@ xui.extend = xui.fn.extend;
 	=======
 
 	Animations, transforms and transitions for getting the most out of hardware accelerated CSS.
- */
+
+*/
+
 xui.extend({
 
 /**
@@ -422,7 +423,6 @@ xui.extend({
     		return serialisedProps;
 		};
 	    
-	    
 		// queued animations
 		if (props instanceof Array) {
 		    // animate each passing the next to the last callback to enqueue
@@ -430,11 +430,7 @@ xui.extend({
 		        
 		    });
 		}
-	
-	    
-	    
-	
-	
+
 	    // this branch means we're dealing with a single tween
 	    var opts = emileOpts(props);
 	    var prop = serialize(props);
@@ -443,18 +439,17 @@ xui.extend({
 			emile(e, prop, opts, callback);
 		});
 	}
-//---
 });
 /**
 	XHR
 	===
 
 	Remoting methods and utils.
+
  */
 xui.extend({	
- 
 /**
-	XHR
+	xhr
 	---
 
 	The classic Xml Http Request sometimes also known as the Greek God: Ajax. Not to be confused with AJAX the cleaning agent.
@@ -472,7 +467,7 @@ xui.extend({
 	### options ###
 
 	- method {String} [get|put|delete|post] Defaults to 'get'.
-	- async {Boolen} Asynchronous request. Defaults to false.
+	- async {Boolean} Asynchronous request. Defaults to false.
 	- data {String} A url encoded string of parameters to send.
 	- callback {Function} Called on 200 status (success)
 
@@ -551,7 +546,6 @@ xui.extend({
 
         return this;
     }
-// --
 });
 /**
  *
@@ -2257,7 +2251,6 @@ var posProcess = function(selector, context){
 window.Sizzle = Sizzle;
 
 })();
-
 /* Cross-Browser Split 1.0.1
 (c) Steven Levithan <stevenlevithan.com>; MIT License
 An ECMA-compliant, uniform cross-browser split method */
@@ -2354,5 +2347,4 @@ cbSplit._nativeSplit = String.prototype.split;
 
 try {var a = "a".split(/a/)[0].nodeType;}
 catch(e){ String.prototype.split = function (separator, limit) { return cbSplit(this, separator, limit); }; }
-
 })();
