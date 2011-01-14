@@ -24,6 +24,9 @@ copy-downloads:
 # warning: do not copy submodules around! that REALLY fucks up git
 copy-tests:
 	rm -rf ./public/tests/*
+	mkdir -p ./public/tests/packages/qunit/qunit
+	cp ./../xui/packages/qunit/qunit/qunit.css ./public/tests/packages/qunit/qunit/qunit.css
+	cp ./../xui/packages/qunit/qunit/qunit.js ./public/tests/packages/qunit/qunit/qunit.js 
 	cp -r ./../xui/spec ./public/tests/tests
 	cp -r ./../xui/lib  ./public/tests/lib
 
