@@ -1,11 +1,10 @@
-
 (function () {
-
 /**
 	Base
 	====
 
 	Includes functionality used to manipulate the xui object collection; things like iteration and set operations are included here.
+
 */
 var undefined,
     xui,
@@ -348,7 +347,7 @@ xui.fn = xui.prototype = {
 	### example ###
 
 		x$(someSelector).each(function(element, index, xui) {
-		    alert("Here's the " + index + " element: "+ element);
+		    alert("Here's the " + index + " element: " + element);
 		});	
 */
     each: function(fn) {
@@ -388,33 +387,32 @@ xui.extend({
 
 	or you can use shorthand syntax by using the location name argument (see below) as the function name.
 
-	    x$(window).outer( html );
-	    x$(window).before( html );
- 
+		x$(window).outer( html );
+		x$(window).before( html );
+
 	### arguments ###
- 
-	 - location:string can be one of: inner, outer, top, bottom, remove, before or after.
-	 - html:string any string of html markup or an HTMLElement.
+
+	- location:string can be one of: inner, outer, top, bottom, remove, before or after.
+	- html:string any string of html markup or an HTMLElement.
 
 	### example ###
 
-	  	x$('#foo').html( 'inner', '<strong>rock and roll</strong>' );
-	  	x$('#foo').html( 'outer', '<p>lock and load</p>' );
+		x$('#foo').html( 'inner', '<strong>rock and roll</strong>' );
+		x$('#foo').html( 'outer', '<p>lock and load</p>' );
 		x$('#foo').html( 'top', '<div>bangers and mash</div>');
-	  	x$('#foo').html( 'bottom','<em>mean and clean</em>');
-	  	x$('#foo').html( 'remove');	
-	  	x$('#foo').html( 'before', '<p>some warmup html</p>');
-	  	x$('#foo').html( 'after', '<p>more html!</p>');
- 
+		x$('#foo').html( 'bottom','<em>mean and clean</em>');
+		x$('#foo').html( 'remove');
+		x$('#foo').html( 'before', '<p>some warmup html</p>');
+		x$('#foo').html( 'after', '<p>more html!</p>');
+
 	or
 
-	    x$('#foo').html( '<p>sweet as honey</p>' );
-	    x$('#foo').outer( '<p>free as a bird</p>' );
-	    x$('#foo').top( '<b>top of the pops</b>' );
-	    x$('#foo').bottom( '<span>bottom of the barrel</span>' );
-	    x$('#foo').before( '<pre>first in line</pre>' );
-	    x$('#foo').after( '<marquee>better late than never</marquee>' );
-
+		x$('#foo').html( '<p>sweet as honey</p>' );
+		x$('#foo').outer( '<p>free as a bird</p>' );
+		x$('#foo').top( '<b>top of the pops</b>' );
+		x$('#foo').bottom( '<span>bottom of the barrel</span>' );
+		x$('#foo').before( '<pre>first in line</pre>' );
+		x$('#foo').after( '<marquee>better late than never</marquee>' );
 */
     html: function(location, html) {
         clean(this);
@@ -426,11 +424,21 @@ xui.extend({
             html = location;
             location = 'inner';
         }
-        if (html.each !== undefined) {
-            var that = this;
-            html.each(function(el){
-                that.html(location, el);
-            });
+        if (location != 'remove' && html && html.each !== undefined) {
+            if (location == 'inner') {
+                var d = document.createElement('p');
+                html.each(function(el) {
+                    d.appendChild(el);
+                });
+                this.each(function(el) {
+                    el.innerHTML = d.innerHTML;
+                });
+            } else {
+                var that = this;
+                html.each(function(el){
+                    that.html(location, el);
+                });
+            }
             return this;
         }
         return this.each(function(el) {
@@ -474,12 +482,12 @@ xui.extend({
 
 	### syntax (and examples) ###
 
-	    x$(window).attr( attribute, value );
+		x$(window).attr( attribute, value );
 
 	To retrieve an attribute value, simply don't provide the optional second parameter:
 
 		x$('.someClass').attr( 'class' );
-	
+
 	To set an attribute, use both parameters:
 
 		x$('.someClass').attr( 'disabled', 'disabled' );
@@ -488,7 +496,6 @@ xui.extend({
 
 	- attribute:string the name of the element's attribute to set or retrieve.
 	- html:string if retrieving an attribute value, don't specify this parameter. Otherwise, this is the value to set the attribute to.
-
 */
     attr: function(attribute, val) {
         if (arguments.length == 2) {
@@ -592,9 +599,20 @@ function clean(collection) {
 	Event
 	=====
 
-	A good old fashioned event handling system.
+	A good old fashioned yet new skool event handling system.
+
+	- click
+	- load
+	- touchstart
+	- touchmove
+	- touchend
+	- touchcancel
+	- gesturestart
+	- gesturechange
+	- gestureend
+	- orientationchange
 	
- */
+*/
 xui.events = {}; var cache = {};
 xui.extend({
 
@@ -646,40 +664,40 @@ xui.extend({
             el.addEventListener(type, _createResponder(el, type, fn), false);
         });
     },
+
 /**
 	un
 	--
-	
+
 	Unregisters a specific callback, or if no specific callback is passed in, 
 	unregisters all event callbacks of a specific type.
-	
+
 	### syntax ###
-	
-	    x$('button').un('click', specificCallback);
-	    
+
+		x$('button').un('click', specificCallback);
+
 	The above unregisters only the `specificCallback` function on all button elements.
-	
-	    x$('button').un('click');
-	    
+
+		x$('button').un('click');
+
 	The above unregisters all callbacks assigned to all button elements.
-	
+
 	### arguments ###
-	
+
 	- type:string the event to unsubscribe from click|load|etc
 	- fn:function callback function to unsubscribe (optional)
-	
+
 	### example ###
-	
-	    x$('button').on('click',function(){alert('hi!');}); // callback subscribed to click.
-	    x$('button').un('click'); // No more callbacks fired on click of button elements!
-	    
+
+		x$('button').on('click',function(){alert('hi!');}); // callback subscribed to click.
+		x$('button').un('click'); // No more callbacks fired on click of button elements!
+
 	or ...
-	
-	    var funk = function() { alert('yo!'); }
-    	x$('button').on('click', funk); // callback subscribed to click.
-    	x$('button').on('click', function(){ alert('hi!'); });
-        x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
-	
+
+		var funk = function() { alert('yo!'); }
+		x$('button').on('click', funk); // callback subscribed to click.
+		x$('button').on('click', function(){ alert('hi!'); });
+		x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
 */
     un: function(type, fn) {
         return this.each(function (el) {
@@ -699,17 +717,18 @@ xui.extend({
             delete cache[id];
         });
     },
+
 /**
 	fire
 	----
 
-    Fires a specific event on the xui collection.
+	Fires a specific event on the xui collection.
 
 	### syntax ###
 
-	    x$('button').fire('click', {some:'data'});
+		x$('button').fire('click', {some:'data'});
 
-    Fires an event with some specific data attached to the event's `data` property.
+	Fires an event with some specific data attached to the event's `data` property.
 
 	### arguments ###
 
@@ -718,8 +737,8 @@ xui.extend({
 
 	### example ###
 
-    EXAMPLE HERE AHHHH
-
+        x$('button#reset').fire('click', {died:true});
+        x$('.target').fire('touchstart');
 */
     fire: function (type, data) {
         return this.each(function (el) {
@@ -734,27 +753,8 @@ xui.extend({
             el.dispatchEvent(event);
   	    });
   	}
-  
-// --
 });
 
-/**
-	Events
-	------
-
-	A good new skool fashioned event handling system.
-
-	- click
-	- load
-	- touchstart
-	- touchmove
-	- touchend
-	- touchcancel
-	- gesturestart
-	- gesturechange
-	- gestureend
-	- orientationchange
- */
 "click load submit touchstart touchmove touchend touchcancel gesturestart gesturechange gestureend orientationchange".split(' ').forEach(function (event) {
   xui.fn[event] = function(action) { return function (fn) { return fn ? this.on(action, fn) : this.fire(action); }; }(event);
 });
@@ -762,9 +762,7 @@ xui.extend({
 // patched orientation support - Andriod 1 doesn't have native onorientationchange events
 xui(window).on('load', function() {
     if (!('onorientationchange' in document.body)) {
-      (function () {
-        var w = window.innerWidth, h = window.innerHeight;
-        
+      (function (w, h) {
         xui(window).on('resize', function () {
           var portraitSwitch = (window.innerWidth < w && window.innerHeight > h) && (window.innerWidth < window.innerHeight),
               landscapeSwitch = (window.innerWidth > w && window.innerHeight < h) && (window.innerWidth > window.innerHeight);
@@ -775,7 +773,7 @@ xui(window).on('load', function() {
             h = window.innerHeight;
           }
         });
-      })();
+      })(window.innerWidth, window.innerHeight);
     }
 });
 
@@ -816,13 +814,14 @@ function _createResponder(element, eventName, handler) {
     r.push(responder);
     return responder;
 }
-
 /**
 	Effects
 	=======
 
 	Animations, transforms and transitions for getting the most out of hardware accelerated CSS.
- */
+
+*/
+
 xui.extend({
 
 /**
@@ -875,7 +874,6 @@ xui.extend({
     		return serialisedProps;
 		};
 	    
-	    
 		// queued animations
 		if (props instanceof Array) {
 		    // animate each passing the next to the last callback to enqueue
@@ -883,11 +881,7 @@ xui.extend({
 		        
 		    });
 		}
-	
-	    
-	    
-	
-	
+
 	    // this branch means we're dealing with a single tween
 	    var opts = emileOpts(props);
 	    var prop = serialize(props);
@@ -896,13 +890,13 @@ xui.extend({
 			emile(e, prop, opts, callback);
 		});
 	}
-//---
 });
 /**
 	Style
 	=====
 
 	Anything related to how things look. Usually, this is CSS.
+
 */
 function hasClass(el, className) {
     return getClassRegEx(className).test(el.className);
@@ -917,7 +911,6 @@ function trim(text) {
 }
 
 xui.extend({
-
 /**
 	setStyle
 	--------
@@ -1099,7 +1092,6 @@ xui.extend({
         }
         return this;
     }
-// --
 });
 
 // RS: now that I've moved these out, they'll compress better, however, do these variables
@@ -1122,11 +1114,11 @@ var reClassNameCache = {},
 	===
 
 	Remoting methods and utils.
+
  */
 xui.extend({	
- 
 /**
-	XHR
+	xhr
 	---
 
 	The classic Xml Http Request sometimes also known as the Greek God: Ajax. Not to be confused with AJAX the cleaning agent.
@@ -1144,7 +1136,7 @@ xui.extend({
 	### options ###
 
 	- method {String} [get|put|delete|post] Defaults to 'get'.
-	- async {Boolen} Asynchronous request. Defaults to false.
+	- async {Boolean} Asynchronous request. Defaults to false.
 	- data {String} A url encoded string of parameters to send.
 	- callback {Function} Called on 200 status (success)
 
@@ -1223,7 +1215,6 @@ xui.extend({
 
         return this;
     }
-// --
 });
 // emile.js (c) 2009 Thomas Fuchs
 // Licensed under the terms of the MIT license.

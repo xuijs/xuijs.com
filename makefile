@@ -23,6 +23,7 @@ copy-downloads:
 
 # warning: do not copy submodules around! that REALLY fucks up git
 copy-tests:
+	rm -rf ./public/tests/*
 	cp -r ./../xui/spec ./public/tests/tests
 	cp -r ./../xui/lib  ./public/tests/lib
 
