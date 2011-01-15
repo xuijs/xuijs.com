@@ -1,37 +1,55 @@
 
 <h1><a name="XHR">XHR</a></h1>
 
-<p>Remoting methods and utils.</p>
+<p>Everything related to remote network connections.</p>
 
 <h2>xhr</h2>
 
-<p>The classic Xml Http Request sometimes also known as the Greek God: Ajax. Not to be confused with AJAX the cleaning agent.
-This method has a few new tricks. It is always invoked on an element collection and follows the identical behaviour as the
-<code>html</code> method. If there no callback is defined the response text will be inserted into the elements in the collection.</p>
+<p>The classic <code>XMLHttpRequest</code> sometimes also known as the Greek God: <em>Ajax</em>. Not to be confused with <em>AJAX</em> the cleaning agent.</p>
+
+<h3>detail</h3>
+
+<p>This method has a few new tricks.</p>
+
+<p>It is always invoked on an element collection and uses the behaviour of <code>html</code>.</p>
+
+<p>If there no callback, then the <code>responseText</code> will be inserted into the elements in the collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>xhr(location, url, options)
+<pre><code>x$( selector ).xhr( location, url, options )
 </code></pre>
 
-<p>or this method will accept just a url with a default behavior of inner...</p>
+<p>or accept a url with a default behavior of inner:</p>
 
-<pre><code>xhr(url, options);
+<pre><code>x$( selector ).xhr( url, options );
 </code></pre>
 
-<h3>options</h3>
+<p>or accept a url with a callback:</p>
+
+<pre><code>x$( selector ).xhr( url, fn );
+</code></pre>
+
+<h3>arguments</h3>
 
 <ul>
-<li>method {String} [get|put|delete|post] Defaults to 'get'.</li>
-<li>async {Boolean} Asynchronous request. Defaults to false.</li>
-<li>data {String} A url encoded string of parameters to send.</li>
-<li>callback {Function} Called on 200 status (success)</li>
+<li>location <code>String</code> is the location to insert the <code>responseText</code>. See <code>html</code> for values.</li>
+<li>url <code>String</code> is where to send the request.</li>
+<li>fn <code>Function</code> is called on status 200 (i.e. sucess callback).</li>
+<li>options <code>Object</code> is a JSON object with one or more of the following:
+<ul>
+<li>method <code>String</code> can be <em>get</em>, <em>put</em>, <em>delete</em>, <em>post</em>. Default is <em>get</em>.</li>
+<li>async <code>Boolean</code> enables an asynchronous request. Defaults to <em>false</em>.</li>
+<li>data <code>String</code> is a url encoded string of parameters to send.</li>
+<li>callback <code>Function</code> is called on status 200 (i.e. success callback).</li>
+</ul></li>
 </ul>
 
 <h3>response</h3>
 
 <ul>
-<li>The response available to the callback function as 'this', it is not passed in.</li>
+<li>The response is available to the callback function as <code>this</code>.</li>
+<li>The response is not passed into the callback.</li>
 <li><code>this.reponseText</code> will have the resulting data from the file.</li>
 </ul>
 
@@ -47,10 +65,20 @@ x$('#status').xhr('after', '/status.html');
 
 <p>or</p>
 
-<pre><code>x$('#status').xhr('/status.html');
+<pre><code>// same as using 'inner'
+x$('#status').xhr('/status.html');
 
-x$('#left-panel').xhr('/panel', {callback:function(){ alert("All Done!") }});
+// define a callback and enable async execution
+x$('#left-panel').xhr('/panel', {
+    async: true,
+    callback: function() {
+        alert("The response is " + this.responseText);
+    }
+});
 
-x$('#left-panel').xhr('/panel', function(){ alert(this.responseText) });
+// define a callback with the shorthand syntax
+x$('#left-panel').xhr('/panel', function() {
+    alert("The response is " + this.responseText);
+});
 </code></pre>
 

@@ -1,65 +1,69 @@
 
 <h1><a name="Style">Style</a></h1>
 
-<p>Anything related to how things look. Usually, this is CSS.</p>
+<p>Everything related to appearance. Usually, this is CSS.</p>
 
 <h2>setStyle</h2>
 
-<p>Sets a single CSS property to a new value.</p>
+<p>Sets the value of a single CSS property.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(selector).setStyle(property, value);
+<pre><code>x$( selector ).setStyle( property, value );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>property:string the property to modify</li>
-<li>value:string the property value to set</li>
+<li>property <code>String</code> is the name of the property to modify.</li>
+<li>value <code>String</code> is the new value of the property.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$('.txt').setStyle('color', '#000');
+<pre><code>x$('.flash').setStyle('color', '#000');
+x$('.button').setStyle('backgroundColor', '#EFEFEF');
 </code></pre>
 
 <h2>getStyle</h2>
 
-<p>Retuns a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.</p>
+<p>Retuns the value of a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(selector).getStyle(property, callback);
+<pre><code>x$( selector ).getStyle( property, callback );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>property:string a css key (for example, border-color NOT borderColor)</li>
-<li>callback:function (optional) a method to call on each element in the collection </li>
+<li>property <code>String</code> is the name of the CSS property to get.</li>
+<li>callback <code>Function</code> is called on each element in the collection and passed the property <em>(optional)</em>.</li>
 </ul>
 
 <h3>example</h3>
 
 <pre><code>x$('ul#nav li.trunk').getStyle('font-size');
+x$('ul#nav li.trunk').getStyle('fontSize');
 
-x$('a.globalnav').getStyle( 'background', function(prop){ prop == 'blue' ? 'green' : 'blue' });
+x$('ul#nav li.trunk').getStyle('backgroundColor', function(prop) {
+    return (prop === 'blue') ? 'green' : 'blue';
+});
 </code></pre>
 
 <h2>addClass</h2>
 
-<p>Adds the classname to all the elements in the collection.</p>
+<p>Adds a class to all of the elements in the collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>$(selector).addClass(className);
+<pre><code>$( selector ).addClass( className );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>className:string the name of the CSS class to apply</li>
+<li>className <code>String</code> is the name of the CSS class to add.</li>
 </ul>
 
 <h3>example</h3>
@@ -69,63 +73,75 @@ x$('a.globalnav').getStyle( 'background', function(prop){ prop == 'blue' ? 'gree
 
 <h2>hasClass</h2>
 
-<p>Checks to see if classname is one the element. If a callback isn't passed, hasClass expects only one element in collection - but should it?</p>
+<p>Checks if the class is on the element.</p>
 
 <h3>syntax</h3>
 
-<pre><code>$(selector).hasClass('className');
-$(selector).hasClass('className', function(element) {});
+<pre><code>$( selector ).hasClass( className, fn );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>className:string the name of the CSS class to apply</li>
+<li>className <code>String</code> is the name of the CSS class to find.</li>
+<li><p>fn <code>Function</code> is a called for each element found and passed the element <em>(optional)</em>.</p>
+
+<pre><code>// `element` is the HTMLElement that has the class
+function(element) {
+    console.log(element);
+}
+</code></pre></li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>$('#foo').hasClass('awesome'); // returns true or false
-$('.foo').hasClass('awesome',function(e){}); // returns XUI object
+<pre><code>// returns true or false
+$('#foo').hasClass('awesome');
+
+// returns true or false,
+// and calls the function with each element
+$('.foo').hasClass('awesome', function(element) {
+    console.log('Hey, I found: ' + element);
+});
 </code></pre>
 
 <h2>removeClass</h2>
 
-<p>Removes the classname from all the elements in the collection.</p>
+<p>Removes the class from all elements in the collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(selector).removeClass(className);
+<pre><code>x$( selector ).removeClass( className );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>className:string the name of the CSS class to remove.</li>
+<li>className <code>String</code> is the name of the CSS class to remove.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$('.bar').removeClass('awesome');
+<pre><code>x$('.foo').removeClass('awesome');
 </code></pre>
 
 <h2>css</h2>
 
-<p>Set a number of CSS properties at once.</p>
+<p>Set multiple CSS properties at once.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(selector).css(object);
+<pre><code>x$( selector ).css( properties );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>an object literal of css key/value pairs to set.</li>
+<li>properties <code>Object</code> is a JSON object that defines the property name/value pairs to set.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$('h2.fugly').css({ backgroundColor:'blue', color:'white', border:'2px solid red' });
+<pre><code>x$('.foo').css({ backgroundColor:'blue', color:'white', border:'2px solid red' });
 </code></pre>
 
