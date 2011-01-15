@@ -1,7 +1,7 @@
 
 <h1><a name="Event">Event</a></h1>
 
-<p>A good old fashioned yet new skool event handling system.</p>
+<p>A good old fashioned events with new skool handling. Shortcuts exist for:</p>
 
 <ul>
 <li>click</li>
@@ -20,33 +20,34 @@
 
 <p>Registers a callback function to a <a href="dom#DOM">DOM</a> event on the element collection.</p>
 
-<p>For more information see:</p>
-
-<ul>
-<li>http://developer.apple.com/webapps/docs/documentation/AppleApplications/Reference/SafariWebContent/HandlingEvents/chapter<em>7</em>section<em>1.html#//apple</em>ref/doc/uid/TP40006511-SW1</li>
-</ul>
-
 <h3>syntax</h3>
 
-<pre><code>x$('button').on( 'click', function(e){ alert('hey that tickles!') });
+<pre><code>x$( 'button' ).on( type, fn );
 </code></pre>
 
-<p>or...</p>
+<p>or</p>
 
-<pre><code>x$('a.save').click(function(e){ alert('tee hee!') });
+<pre><code>x$( 'button' ).click( fn );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>type:string the event to subscribe to click|load|etc</li>
-<li>fn:function a callback function to execute when the event is fired</li>
+<li>type <code>String</code> is the event to subscribe (e.g. <em>load</em>, <em>click</em>, <em>touchstart</em>, etc).</li>
+<li>fn <code>Function</code> is a callback function to execute when the event is fired.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$(window).load(function(e){
-  x$('.save').touchstart( function(evt){ alert('tee hee!') }).css(background:'grey');
+<pre><code>x$( 'button' ).on( 'click', function(e) {
+    alert('hey that tickles!');
+});
+</code></pre>
+
+<p>or</p>
+
+<pre><code>x$(window).load(function(e) {
+  x$('.save').touchstart( function(evt) { alert('tee hee!'); }).css(background:'grey');
 });
 </code></pre>
 
@@ -57,58 +58,67 @@ unregisters all event callbacks of a specific type.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$('button').un('click', specificCallback);
+<p>Unregister the given function, for the given type, on all button elements:</p>
+
+<pre><code>x$( 'button' ).un( type, fn );
 </code></pre>
 
-<p>The above unregisters only the <code>specificCallback</code> function on all button elements.</p>
+<p>Unregisters all callbacks of the given type, on all button elements:</p>
 
-<pre><code>x$('button').un('click');
+<pre><code>x$( 'button' ).un( type );
 </code></pre>
-
-<p>The above unregisters all callbacks assigned to all button elements.</p>
 
 <h3>arguments</h3>
 
 <ul>
-<li>type:string the event to unsubscribe from click|load|etc</li>
-<li>fn:function callback function to unsubscribe (optional)</li>
+<li>type <code>String</code> is the event to unsubscribe (e.g. <em>load</em>, <em>click</em>, <em>touchstart</em>, etc).</li>
+<li>fn <code>Function</code> is the callback function to unsubscribe <em>(optional)</em>.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$('button').on('click',function(){alert('hi!');}); // callback subscribed to click.
-x$('button').un('click'); // No more callbacks fired on click of button elements!
+<pre><code>// First, create a click event that display an alert message
+x$('button').on('click', function() {
+    alert('hi!');
+});
+
+// Now unsubscribe all functions that response to click on all button elements
+x$('button').un('click');
 </code></pre>
 
-<p>or ...</p>
+<p>or</p>
 
-<pre><code>var funk = function() { alert('yo!'); }
-x$('button').on('click', funk); // callback subscribed to click.
-x$('button').on('click', function(){ alert('hi!'); });
-x$('button').un('click', funk); // When buttons are clicked, the 'hi!' alert will pop up but not the 'yo!' alert.
+<pre><code>var greeting = function() { alert('yo!'); };
+
+x$('button').on('click', greeting);
+x$('button').on('click', function() {
+    alert('hi!');
+});
+
+// When any button is clicked, the 'hi!' message will fire, but not the 'yo!' message.
+x$('button').un('click', greeting);
 </code></pre>
 
 <h2>fire</h2>
 
-<p>Fires a specific event on the xui collection.</p>
+<p>Triggers a specific event on the xui collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$('button').fire('click', {some:'data'});
+<pre><code>x$( selector ).fire( type, data );
 </code></pre>
-
-<p>Fires an event with some specific data attached to the event's <code>data</code> property.</p>
 
 <h3>arguments</h3>
 
 <ul>
-<li>type:string the event to fire, click|load|etc</li>
-<li>data:object JavaScript object to attach to the event's <code>data</code> property.</li>
+<li>type <code>String</code> is the event to fire (e.g. <em>load</em>, <em>click</em>, <em>touchstart</em>, etc).</li>
+<li>data <code>Object</code> is a JSON object to use as the event's <code>data</code> property.</li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>   x$('button#reset').fire('click', {died:true});
-   x$('.target').fire('touchstart');
+<pre><code>x$('button#reset').fire('click', { died:true });
+
+x$('.target').fire('touchstart');
 </code></pre>
 
