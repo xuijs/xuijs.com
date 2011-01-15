@@ -11,8 +11,7 @@
 .atn { color: #F5896F; }
 .atv { color: #85C5DC; }
 .dec { color: #878989; }
-pre.prettyprint,
-code.prettyprint { background-color:#222; }
+pre.prettyprint { background-color:#222; }
 
 /* Website */
 
@@ -20,24 +19,30 @@ pre,
 code {
   font-family:"DejaVu", "Monaco", "Courier New", "Courier";
   font-size:11px;
+  line-height:1.5em;
   text-transform:none;
 }
 
+pre code {
+  background-color:transparent;
+  padding:0px;
+}
+
 pre {
-  -moz-border-radius:8px;
-  -webkit-border-radius:8px;
-  border-radius:8px;
   -moz-box-shadow:#AAA 0px 0px 15px;
   -webkit-box-shadow:#AAA 0px 0px 15px;
   box-shadow:#AAA 0px 0px 15px;
-  line-height:1.5em;
+  -moz-border-radius:8px;
+  -webkit-border-radius:8px;
+  border-radius:8px;
   padding:15px 20px;
 }
 
 code {
-  -moz-border-radius:2px;
-  -webkit-border-radius:2px;
-  border-radius:2px;
+  background-color:#E0E0E0;
+  -moz-border-radius:12px;
+  -webkit-border-radius:12px;
+  border-radius:12px;
   padding:2px 6px;
 }
 

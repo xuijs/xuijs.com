@@ -154,3 +154,8 @@ section ul.no-indent {
 .docs ul {
   margin-left:20px;
 }
+
+/* Strange markdown error workaround *//
+.docs li > p {
+  margin-left:0px;
+}
