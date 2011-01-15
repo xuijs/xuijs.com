@@ -1,71 +1,58 @@
 
 <h1><a name="Basics">Basics</a></h1>
 
-<p>Includes functionality used to manipulate the xui object collection; things like iteration and set operations are included here.</p>
-
-<ul>
-<li>extend</li>
-<li>find</li>
-<li>set</li>
-<li>reduce</li>
-<li>has</li>
-<li>filter</li>
-<li>not</li>
-<li>each</li>
-</ul>
+<p>Includes functionality used to manipulate the xui object collection.</p>
 
 <h2>extend</h2>
 
-<p>Allows extension of xui's prototype with the members/methods of the provided object.</p>
+<p>Extends XUI's prototype with the members of another object.</p>
 
 <h3>syntax</h3>
 
 <pre><code>xui.extend( object );
 </code></pre>
 
-<p>Call extend on the xui object to extend all xui instances with functionality and/or members of the passed-in object.</p>
-
 <h3>arguments</h3>
 
 <ul>
-<li>object:object a JavaScript object whose members will be incorporated into xui's prototype</li>
+<li>object <code>Object</code> contains the members that will be added to XUI's prototype.</li>
 </ul>
 
 <h3>example</h3>
 
 <p>Given:</p>
 
-<pre><code>var thing = {
-    first : function() { return this[ 0 ]; },
-    last : function() { return this[ this.length - 1 ]; }
+<pre><code>var sugar = {
+    first: function() { return this[0]; },
+    last:  function() { return this[this.length - 1]; }
 }
 </code></pre>
 
-<p>We can extend xui's prototype with these methods by using <code>extend</code>:</p>
+<p>We can extend xui's prototype with members of <code>sugar</code> by using <code>extend</code>:</p>
 
-<pre><code>xui.extend( thing );
+<pre><code>xui.extend(sugar);
 </code></pre>
 
 <p>Now we can use <code>first</code> and <code>last</code> in all instances of xui:</p>
 
-<pre><code>var f = x$( '.someClass' ).first();
-var l = x$( '.differentClass' ).last();
+<pre><code>var f = x$('.button').first();
+var l = x$('.notice').last();
 </code></pre>
 
 <h2>find</h2>
 
-<p>Finds matching elements based on a query string. The global xui entry <code>x$</code> function is a reference to the <code>find</code> function.</p>
+<p>Find the elements that match a query string. <code>x$</code> is an alias for <code>find</code>.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(window).find( selector [, context] );
+<pre><code>x$( window ).find( selector, context );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>selector:string a CSS selector string to match elements to.</li>
-<li>context:HTMLElement a HTML element to use as the "root" element to search from.</li>
+<li>selector <code>String</code> is a CSS selector that will query for elements.</li>
+<li>context <code>HTMLElement</code> is the parent element to search from <em>(optional)</em>.</li>
 </ul>
 
 <h3>example</h3>
@@ -82,7 +69,7 @@ var l = x$( '.differentClass' ).last();
 &lt;/ul&gt;
 </code></pre>
 
-<p>We can select only specific list items by using <code>find</code>, as opposed to selecting off the document root:</p>
+<p>We can select list items using <code>find</code>:</p>
 
 <pre><code>x$('li');                 // returns all four list item elements.
 x$('#second').find('li'); // returns list items "three" and "four"
@@ -94,7 +81,7 @@ x$('#second').find('li'); // returns list items "three" and "four"
 
 <h3>syntax</h3>
 
-<pre><code>x$(window).set( array );
+<pre><code>x$( window ).set( array );
 </code></pre>
 
 <h2>reduce</h2>
@@ -103,127 +90,137 @@ x$('#second').find('li'); // returns list items "three" and "four"
 
 <h3>syntax</h3>
 
-<pre><code>x$(someSelector).reduce( [ elements [, toIndex ]] );
+<pre><code>x$( window ).reduce( elements, index );
 </code></pre>
-
-<p>The elements parameter is optional - if not specified, will reduce the elements in the current xui object.</p>
 
 <h3>arguments</h3>
 
 <ul>
-<li>elements:Array an array of elements to reduce (optional)</li>
-<li>toIndex:Number last index of elements to include in the reducing operation.</li>
+<li>elements <code>Array</code> is an array of elements to reduce <em>(optional)</em>.</li>
+<li>index <code>Number</code> is the last array index to include in the reduction. If unspecified, it will reduce all elements <em>(optional)</em>.</li>
 </ul>
 
 <h2>has</h2>
 
-<p>Has modifies the elements array and returns all the elements that match (has) a CSS selector.</p>
+<p>Returns the elements that match a given CSS selector.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(someSelector).has( query );
+<pre><code>x$( window ).has( selector );
 </code></pre>
-
-<p>Behind the scenes, actually calls the filter method.</p>
 
 <h3>arguments</h3>
 
 <ul>
-<li>query:string a CSS selector that will match all children of originally-selected xui collection</li>
+<li>selector <code>String</code> is a CSS selector that will match all children of the xui collection.</li>
 </ul>
 
 <h3>example</h3>
 
-<p>Given</p>
+<p>Given:</p>
 
 <pre><code>&lt;div&gt;
-    &lt;div class="gotit"&gt;these ones&lt;/div&gt;
-    &lt;div class="gotit"&gt;have an extra class&lt;/div&gt;
+    &lt;div class="round"&gt;Item one&lt;/div&gt;
+    &lt;div class="round"&gt;Item two&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
 
-<p>We can use xui like so</p>
+<p>We can use <code>has</code> to select specific objects:</p>
 
-<pre><code>var divs = x$('div');              // we've got all four divs from above.
-var someDivs = divs.has('.gotit'); // we've now got only the two divs with the class
+<pre><code>var divs    = x$('div');          // got all three divs.
+var rounded = divs.has('.round'); // got two divs with the class .round
 </code></pre>
 
 <h2>filter</h2>
 
-<p>Both an internal utility function, but also allows developers to extend xui using custom filters</p>
+<p>Extend XUI with custom filters. This is an interal utility function, but is also useful to developers.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(someSelector).filter( functionHandle );
+<pre><code>x$( window ).filter( fn );
 </code></pre>
-
-<p>The <code>functionHandle</code> function will get invoked with <code>this</code> being the element being iterated on,
-and the index passed in as a parameter.</p>
 
 <h3>arguments</h3>
 
 <ul>
-<li>functionHandle:Function a function reference that evaluates to true/false, determining which elements get included in the xui collection.</li>
+<li><p>fn <code>Function</code> is called for each element in the XUI collection.</p>
+
+<pre><code>// `index` is the array index of the current element
+function( index ) {
+    // `this` is the element iterated on
+    // return true to add element to new XUI collection
+}
+</code></pre></li>
 </ul>
 
 <h3>example</h3>
 
-<p>Perhaps we'd want to filter input elements that are disabled:</p>
+<p>Filter all the <code>&lt;input /&gt;</code> elements that are disabled:</p>
 
-<pre><code>x$('input').filter(function(i) {
+<pre><code>x$('input').filter(function(index) {
     return this.checked;
 });
 </code></pre>
 
 <h2>not</h2>
 
-<p>Not modifies the elements array and returns all the elements that DO NOT match a CSS Query - the opposite of has</p>
+<p>The opposite of <code>has</code>. It modifies the elements and returns all of the elements that do <strong>not</strong> match a CSS query.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(someSelector).not( someOtherSelector );
+<pre><code>x$( window ).not( selector );
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>someOtherSelector:string a CSS selector that elements should NOT match to.</li>
+<li>selector <code>String</code> a CSS selector for the elements that should <strong>not</strong> be matched.</li>
 </ul>
 
 <h3>example</h3>
 
-<p>Given</p>
+<p>Given:</p>
 
 <pre><code>&lt;div&gt;
-    &lt;div class="gotit"&gt;these ones&lt;/div&gt;
-    &lt;div class="gotit"&gt;have an extra class&lt;/div&gt;
+    &lt;div class="round"&gt;Item one&lt;/div&gt;
+    &lt;div class="round"&gt;Item two&lt;/div&gt;
+    &lt;div class="square"&gt;Item three&lt;/div&gt;
+    &lt;div class="shadow"&gt;Item four&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
 
-<p>We can use xui like so</p>
+<p>We can use <code>not</code> to select objects:</p>
 
-<pre><code>var divs = x$('div');              // we've got all four divs from above.
-var someDivs = divs.not('.gotit'); // we've now got only the two divs without the class "gotit"
+<pre><code>var divs     = x$('div');          // got all four divs.
+var notRound = divs.not('.round'); // got two divs with classes .square and .shadow
 </code></pre>
 
 <h2>each</h2>
 
-<p>Element iterator (over the xui collection).</p>
+<p>Element iterator for an XUI collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>x$(window).each( functionHandle )
+<pre><code>x$( window ).each( fn )
 </code></pre>
 
 <h3>arguments</h3>
 
 <ul>
-<li>functionHandle:Function callback function that will execute with each element being passed in as the <code>this</code> object and first parameter to callback</li>
+<li><p>fn <code>Function</code> callback that is called once for each element.</p>
+
+<pre><code>// `element` is the current element
+// `index` is the element index in the XUI collection
+// `xui` is the XUI collection.
+function( element, index, xui ) {
+    // `this` is the current element
+}
+</code></pre></li>
 </ul>
 
 <h3>example</h3>
 
-<pre><code>x$(someSelector).each(function(element, index, xui) {
+<pre><code>x$('div').each(function(element, index, xui) {
     alert("Here's the " + index + " element: " + element);
 });
 </code></pre>
