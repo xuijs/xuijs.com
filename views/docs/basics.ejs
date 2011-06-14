@@ -1,4 +1,3 @@
-
 <h1><a name="Basics">Basics</a></h1>
 
 <p>Includes functionality used to manipulate the xui object collection.</p>
@@ -73,6 +72,18 @@ var l = x$('.notice').last();
 
 <pre><code>x$('li');                 // returns all four list item elements.
 x$('#second').find('li'); // returns list items "three" and "four"
+</code></pre>
+
+<h3>example</h3>
+
+<p>Given the input field in a form:</p>
+
+<pre><code>&lt;input id="first" type="text" value="xuijs" /&gt;</code></pre>
+
+<p>We can access the underlying DOM elements in an XUI set by index</p>
+
+<pre><code>x$('#first').attr('value');  // returns 'value' via the XUI set function <code>attr</code>
+x$('#first')[0].value;       // returns 'value' via the underlying DOM element attribute
 </code></pre>
 
 <h2>set</h2>
