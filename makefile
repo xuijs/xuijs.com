@@ -14,12 +14,12 @@ copy-docs:
 	cp ./../xui/doc/ejs/* ./views/docs
 
 copy-downloads:
-	cp ./../xui/lib/xui-2.0.0.js 		./public/downloads/xui-2.0.0.js	
-	cp ./../xui/lib/xui-2.0.0.min.js	./public/downloads/xui-2.0.0.min.js
-	cp ./../xui/lib/xui-bb-2.0.0.js		./public/downloads/xui-bb-2.0.0.js
-	cp ./../xui/lib/xui-bb-2.0.0.min.js	./public/downloads/xui-bb-2.0.0.min.js
-	cp ./../xui/lib/xui-ie-2.0.0.js		./public/downloads/xui-ie-2.0.0.js
-	cp ./../xui/lib/xui-ie-2.0.0.min.js ./public/downloads/xui-ie-2.0.0.min.js
+	cp ./../xui/lib/xui-2.2.0.js 		./public/downloads/xui-2.2.0.js	
+	cp ./../xui/lib/xui-2.2.0.min.js	./public/downloads/xui-2.2.0.min.js
+	cp ./../xui/lib/xui-bb-2.2.0.js		./public/downloads/xui-bb-2.2.0.js
+	cp ./../xui/lib/xui-bb-2.2.0.min.js	./public/downloads/xui-bb-2.2.0.min.js
+	cp ./../xui/lib/xui-ie-2.2.0.js		./public/downloads/xui-ie-2.2.0.js
+	cp ./../xui/lib/xui-ie-2.2.0.min.js ./public/downloads/xui-ie-2.2.0.min.js
 
 # warning: do not copy submodules around! that REALLY fucks up git
 copy-tests:
