@@ -1,7 +1,17 @@
 
 <h1><a name="Basics">Basics</a></h1>
 
-<p>Includes functionality used to manipulate the xui object collection.</p>
+<p>xui is available as the global <code>x$</code> function. It accepts a CSS selector string or <a href="dom#DOM">DOM</a> element, or an array of a mix of these, as parameters,
+   and returns the xui object. For example:</p>
+
+<pre><code>   var header = x$('#header'); // returns the element with id attribute equal to "header".
+</code></pre>
+
+<p>For more information on CSS selectors, see the <a class="external" href="http://www.w3.org/TR/CSS2/selector.html">W3C specification</a>. Please note that there are
+   different levels of CSS selector support (Levels 1, 2 and 3) and different browsers support each to different degrees. Be warned!</p>
+
+<p>The functions described in the docs are available on the xui object and often manipulate or retrieve information about the elements in the
+xui collection.</p>
 
 <h2>extend</h2>
 

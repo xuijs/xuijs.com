@@ -5,7 +5,7 @@
 
 <h2>html</h2>
 
-<p>Manipulates HTML in the <a href="dom#DOM">DOM</a>.</p>
+<p>Manipulates HTML in the <a href="dom#DOM">DOM</a>. Also just returns the inner HTML of elements in the collection if called with no arguments.</p>
 
 <h3>syntax</h3>
 
@@ -21,6 +21,11 @@
 
 <pre><code>x$( window ).outer( html );
 x$( window ).before( html );
+</code></pre>
+
+<p>or you can just retrieve the inner HTML of elements in the collection with:</p>
+
+<pre><code>x$( document.body ).html();
 </code></pre>
 
 <h3>arguments</h3>
@@ -53,7 +58,7 @@ x$('#foo').after('&lt;marquee&gt;better late than never&lt;/marquee&gt;');
 
 <h2>attr</h2>
 
-<p>Gets or sets attributes on elements.</p>
+<p>Gets or sets attributes on elements. If getting, returns an array of attributes matching the xui element collection's indices.</p>
 
 <h3>syntax</h3>
 

@@ -1,11 +1,19 @@
-
 (function () {
-
 /**
-	Base
-	====
+	Basics
+	======
+    
+    xui is available as the global `x$` function. It accepts a CSS selector string or DOM element, or an array of a mix of these, as parameters,
+    and returns the xui object. For example:
+    
+        var header = x$('#header'); // returns the element with id attribute equal to "header".
+        
+    For more information on CSS selectors, see the [W3C specification](http://www.w3.org/TR/CSS2/selector.html). Please note that there are
+    different levels of CSS selector support (Levels 1, 2 and 3) and different browsers support each to different degrees. Be warned!
+    
+	The functions described in the docs are available on the xui object and often manipulate or retrieve information about the elements in the
+	xui collection.
 
-	Includes functionality used to manipulate the xui object collection; things like iteration and set operations are included here.
 */
 var undefined,
     xui,
@@ -47,41 +55,49 @@ function removex(array, from, to) {
     return array.push.apply(array, rest);
 }
 
+// converts all CSS style names to DOM style names, i.e. margin-left to marginLeft
+function domstyle(name) {
+  return name.replace(/\-[a-z]/g,function(m) { return m[1].toUpperCase(); });
+}
+
+// converts all DOM style names to CSS style names, i.e. marginLeft to margin-left
+function cssstyle(name) {
+  return name.replace(/[A-Z]/g, function(m) { return '-'+m.toLowerCase(); })
+}
+
 xui.fn = xui.prototype = {
 
 /**
 	extend
 	------
 
-	Allows extension of xui's prototype with the members/methods of the provided object.
+	Extends XUI's prototype with the members of another object.
 
 	### syntax ###
 
 		xui.extend( object );
 
-	Call extend on the xui object to extend all xui instances with functionality and/or members of the passed-in object.
-
 	### arguments ###
 
-	- object:object a JavaScript object whose members will be incorporated into xui's prototype
+	- object `Object` contains the members that will be added to XUI's prototype.
  
 	### example ###
 
 	Given:
 
-		var thing = {
-		    first : function() { return this[ 0 ]; },
-		    last : function() { return this[ this.length - 1 ]; }
+		var sugar = {
+		    first: function() { return this[0]; },
+		    last:  function() { return this[this.length - 1]; }
 		}
 
-	We can extend xui's prototype with these methods by using `extend`:
+	We can extend xui's prototype with members of `sugar` by using `extend`:
 
-		xui.extend( thing );
+		xui.extend(sugar);
 
 	Now we can use `first` and `last` in all instances of xui:
 
-		var f = x$( '.someClass' ).first();
-		var l = x$( '.differentClass' ).last();
+		var f = x$('.button').first();
+		var l = x$('.notice').last();
 */
     extend: function(o) {
         for (var i in o) {
@@ -93,16 +109,16 @@ xui.fn = xui.prototype = {
 	find
 	----
 
-	Finds matching elements based on a query string. The global xui entry `x$` function is a reference to the `find` function.
+	Find the elements that match a query string. `x$` is an alias for `find`.
 
 	### syntax ###
 
-		x$(window).find( selector [, context] );
+		x$( window ).find( selector, context );
 
 	### arguments ###
 
-	- selector:string a CSS selector string to match elements to.
-	- context:HTMLElement an html element to use as the "root" element to search from.
+	- selector `String` is a CSS selector that will query for elements.
+	- context `HTMLElement` is the parent element to search from _(optional)_.
  
 	### example ###
 
@@ -117,9 +133,9 @@ xui.fn = xui.prototype = {
 		    <li id="four">4</li>
 		</ul>
 
-	We can select only specific list items by using `find`, as opposed to selecting off the document root:
+	We can select list items using `find`:
 
-		x$('li'); // returns all four list item elements.
+		x$('li');                 // returns all four list item elements.
 		x$('#second').find('li'); // returns list items "three" and "four"
 */
     find: function(q, context) {
@@ -160,7 +176,7 @@ xui.fn = xui.prototype = {
               ele = slice(ele);
             } else if (q instanceof Array) {
                 ele = q;
-            } else if (q.toString() == '[object NodeList]') {
+            } else if (q.toString() == '[object NodeList]' || q.toString() == '[object HTMLCollection]') {
                 ele = slice(q);
             } else if (q.nodeName || q === window) { // only allows nodes in
                 // an element was passed in
@@ -180,7 +196,7 @@ xui.fn = xui.prototype = {
 
 	### syntax ###
 
-		x$(window).set( array );
+		x$( window ).set( array );
 */
     set: function(elements) {
         var ret = xui();
@@ -192,20 +208,18 @@ xui.fn = xui.prototype = {
 
 /**
 	reduce
-	---
+	------
 
 	Reduces the set of elements in the xui object to a unique set.
 
 	### syntax ###
 
-		x$(someSelector).reduce( [ elements [, toIndex ]] );
-
-	The elements parameter is optional - if not specified, will reduce the elements in the current xui object.
+		x$( window ).reduce( elements, index );
 
 	### arguments ###
 
-	- elements:Array an array of elements to reduce (optional)
-	- toIndex:Number last index of elements to include in the reducing operation.
+	- elements `Array` is an array of elements to reduce _(optional)_.
+	- index `Number` is the last array index to include in the reduction. If unspecified, it will reduce all elements _(optional)_.
 */
     reduce: function(elements, b) {
         var a = [],
@@ -223,31 +237,29 @@ xui.fn = xui.prototype = {
 	has
 	---
 
-	Has modifies the elements array and returns all the elements that match (has) a CSS selector.
+	Returns the elements that match a given CSS selector.
 
 	### syntax ###
 
-		x$(someSelector).has( query );
-
-	Behind the scenes, actually calls the filter method.
+		x$( window ).has( selector );
 
 	### arguments ###
 
-	- query:string a CSS selector that will match all children of originally-selected xui collection
+	- selector `String` is a CSS selector that will match all children of the xui collection.
 
 	### example ###
 
-	Given
+	Given:
 
 		<div>
-		    <div class="gotit">these ones</div>
-		    <div class="gotit">have an extra class</div>
+		    <div class="round">Item one</div>
+		    <div class="round">Item two</div>
 		</div>
 	
-	We can use xui like so
+	We can use `has` to select specific objects:
 
-		var divs = x$('div'); // we've got all four divs from above.
-		var someDivs = divs.has('.gotit'); // we've now got only the two divs with the class
+		var divs    = x$('div');          // got all three divs.
+		var rounded = divs.has('.round'); // got two divs with the class .round
 */
      has: function(q) {
          var list = xui(q);
@@ -260,28 +272,32 @@ xui.fn = xui.prototype = {
              return found;
          });
      },
+
 /**
 	filter
 	------
 
-	Both an internal utility function, but also allows developers to extend xui using custom filters
+	Extend XUI with custom filters. This is an interal utility function, but is also useful to developers.
 
 	### syntax ###
 
-		x$(someSelector).filter( functionHandle );
-
-	The `functionHandle` function will get invoked with `this` being the element being iterated on,
-	and the index passed in as a parameter.
+		x$( window ).filter( fn );
 
 	### arguments ###
 
-	- functionHandle:Function a function reference that evaluates to true/false, determining which elements get included in the xui collection.
+	- fn `Function` is called for each element in the XUI collection.
+
+	        // `index` is the array index of the current element
+	        function( index ) {
+	            // `this` is the element iterated on
+	            // return true to add element to new XUI collection
+	        }
 
 	### example ###
 
-	Perhaps we'd want to filter input elements that are disabled:
+	Filter all the `<input />` elements that are disabled:
 
-		x$('input').filter(function(i) {
+		x$('input').filter(function(index) {
 		    return this.checked;
 		});
 */
@@ -296,35 +312,41 @@ xui.fn = xui.prototype = {
 	not
 	---
 
-	Not modifies the elements array and returns all the elements that DO NOT match a CSS Query - the opposite of has
+	The opposite of `has`. It modifies the elements and returns all of the elements that do __not__ match a CSS query.
 
 	### syntax ###
 
-		x$(someSelector).not( someOtherSelector );
+		x$( window ).not( selector );
 
 	### arguments ###
 
-	- someOtherSelector:string a CSS selector that elements should NOT match to.
+	- selector `String` a CSS selector for the elements that should __not__ be matched.
 
 	### example ###
 
-	Given
+	Given:
 
 		<div>
-		    <div class="gotit">these ones</div>
-		    <div class="gotit">have an extra class</div>
+		    <div class="round">Item one</div>
+		    <div class="round">Item two</div>
+		    <div class="square">Item three</div>
+		    <div class="shadow">Item four</div>
 		</div>
 
-	We can use xui like so
+	We can use `not` to select objects:
 
-		var divs = x$('div'); // we've got all four divs from above.
-		var someDivs = divs.not('.gotit'); // we've now got only the two divs _without_ the class "gotit"	
+		var divs     = x$('div');          // got all four divs.
+		var notRound = divs.not('.round'); // got two divs with classes .square and .shadow
 */
     not: function(q) {
-        var list = slice(this);
+        var list = slice(this),
+            omittedNodes = xui(q);
+        if (!omittedNodes.length) {
+            return this;
+        }
         return this.filter(function(i) {
             var found;
-            xui(q).each(function(el) {
+            omittedNodes.each(function(el) {
                 return found = list[i] != el;
             });
             return found;
@@ -335,21 +357,28 @@ xui.fn = xui.prototype = {
 	each
 	----
 
-	Element iterator (over the xui collection).
+	Element iterator for an XUI collection.
 
 	### syntax ###
 
-		x$(window).each( functionHandle )
+		x$( window ).each( fn )
 
 	### arguments ###
 
-	- functionHandle:Function callback function that will execute with each element being passed in as the `this` object and first parameter to callback
+	- fn `Function` callback that is called once for each element.
+
+		    // `element` is the current element
+		    // `index` is the element index in the XUI collection
+		    // `xui` is the XUI collection.
+		    function( element, index, xui ) {
+		        // `this` is the current element
+		    }
 
 	### example ###
 
-		x$(someSelector).each(function(element, index, xui) {
-		    alert("Here's the " + index + " element: "+ element);
-		});	
+		x$('div').each(function(element, index, xui) {
+		    alert("Here's the " + index + " element: " + element);
+		});
 */
     each: function(fn) {
         // we could compress this by using [].forEach.call - but we wouldn't be able to support
@@ -365,120 +394,156 @@ xui.fn = xui.prototype = {
 xui.fn.find.prototype = xui.fn;
 xui.extend = xui.fn.extend;
 /**
-	Effects
-	=======
+	Fx
+	==
 
-	Animations, transforms and transitions for getting the most out of hardware accelerated CSS.
- */
+	Animations, transforms, and transitions for getting the most out of hardware accelerated CSS.
+
+*/
+
 xui.extend({
 
 /**
 	Tween
 	-----
 
-	Tween is a method for transforming a css property to a new value.
+	Transforms a CSS property's value.
 
 	### syntax ###
 
-		x$(selector).tween(obj, callback);
+		x$( selector ).tween( properties, callback );
 
 	### arguments ###
 
-	- properties: object an object literal of element css properties to tween or an array containing object literals of css properties to tween sequentially.
-	- callback (optional): function to run when the animation is complete
+	- properties `Object` or `Array` of CSS properties to tween.
+	    - `Object` is a JSON object that defines the CSS properties.
+	    - `Array` is a `Object` set that is tweened sequentially.
+	- callback `Function` to be called when the animation is complete. _(optional)_.
+
+	### properties ###
+
+	A property can be any CSS style, referenced by the JavaScript notation.
+
+	A property can also be an option from [emile.js](https://github.com/madrobby/emile):
+
+	- duration `Number` of the animation in milliseconds.
+	- after `Function` is called after the animation is finished.
+	- easing `Function` allows for the overriding of the built-in animation function.
+
+			// Receives one argument `pos` that indicates position
+			// in time between animation's start and end.
+			function(pos) {
+			    // return the new position
+			    return (-Math.cos(pos * Math.PI) / 2) + 0.5;
+			}
 
 	### example ###
 
+		// one JSON object
 		x$('#box').tween({ left:'100px', backgroundColor:'blue' });
-		x$('#box').tween({ left:'100px', backgroundColor:'blue' }, function() { alert('done!'); });
-		x$('#box').tween([{ left:'100px', backgroundColor:'green', duration:.2 }, { right:'100px' }]); 
+		x$('#box').tween({ left:'100px', backgroundColor:'blue' }, function() {
+		    alert('done!');
+		});
+		
+		// array of two JSON objects
+		x$('#box').tween([{left:'100px', backgroundColor:'green', duration:.2 }, { right:'100px' }]); 
 */
-	// options: duration, after, easing
 	tween: function( props, callback ) {
-	    
-	    // creates an options obj for emile
-	    var emileOpts = function(o) {
-	        var options = {};
-    		"duration after easing".split(' ').forEach( function(p) {
-        		if (props[p]) {
-        		    options[p] = props[p];
-        		    delete props[p];
-        		}
-    		});
-    		return options;
-	    }
-	    
-	    // serialize the properties into a string for emile
-	    var serialize = function(props) {
-		    var serialisedProps = [], key;
-    		if (typeof props != string) {
-      		    for (key in props) {
-                    serialisedProps.push(key + ':' + props[key]);
-    		    }
-      		    serialisedProps = serialisedProps.join(';');
-    		} else {
-    		    serialisedProps = props;
-    		}
-    		return serialisedProps;
-		};
-	    
-	    
-		// queued animations
+
+    // creates an options obj for emile
+    var emileOpts = function(o) {
+      var options = {};
+      "duration after easing".split(' ').forEach( function(p) {
+        if (props[p]) {
+            options[p] = props[p];
+            delete props[p];
+        }
+      });
+      return options;
+    }
+
+    // serialize the properties into a string for emile
+    var serialize = function(props) {
+      var serialisedProps = [], key;
+      if (typeof props != string) {
+        for (key in props) {
+          serialisedProps.push(cssstyle(key) + ':' + props[key]);
+        }
+        serialisedProps = serialisedProps.join(';');
+      } else {
+        serialisedProps = props;
+      }
+      return serialisedProps;
+    };
+
+    // queued animations
+    /* wtf is this?
 		if (props instanceof Array) {
 		    // animate each passing the next to the last callback to enqueue
 		    props.forEach(function(a){
-		        
+		      
 		    });
 		}
-	
-	    
-	    
-	
-	
-	    // this branch means we're dealing with a single tween
-	    var opts = emileOpts(props);
-	    var prop = serialize(props);
+    */
+    // this branch means we're dealing with a single tween
+    var opts = emileOpts(props);
+    var prop = serialize(props);
 		
 		return this.each(function(e){
 			emile(e, prop, opts, callback);
 		});
 	}
-//---
 });
 /**
 	XHR
 	===
 
-	Remoting methods and utils.
+	Everything related to remote network connections.
+
  */
 xui.extend({	
- 
 /**
-	XHR
+	xhr
 	---
 
-	The classic Xml Http Request sometimes also known as the Greek God: Ajax. Not to be confused with AJAX the cleaning agent.
-	This method has a few new tricks. It is always invoked on an element collection and follows the identical behaviour as the
-	`html` method. If there no callback is defined the response text will be inserted into the elements in the collection.
+	The classic `XMLHttpRequest` sometimes also known as the Greek God: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
+
+	### detail ###
+
+	This method has a few new tricks.
+
+	It is always invoked on an element collection and uses the behaviour of `html`.
+
+	If there is no callback, then the `responseText` will be inserted into the elements in the collection.
 
 	### syntax ###
 
-		xhr(location, url, options)
+		x$( selector ).xhr( location, url, options )
 
-	or this method will accept just a url with a default behavior of inner...
+	or accept a url with a default behavior of inner:
 
-		xhr(url, options);
+		x$( selector ).xhr( url, options );
 
-	### options ###
+	or accept a url with a callback:
+	
+		x$( selector ).xhr( url, fn );
 
-	- method {String} [get|put|delete|post] Defaults to 'get'.
-	- async {Boolen} Asynchronous request. Defaults to false.
-	- data {String} A url encoded string of parameters to send.
-	- callback {Function} Called on 200 status (success)
+	### arguments ###
+
+	- location `String` is the location to insert the `responseText`. See `html` for values.
+	- url `String` is where to send the request.
+	- fn `Function` is called on status 200 (i.e. success callback).
+	- options `Object` is a JSON object with one or more of the following:
+		- method `String` can be _get_, _put_, _delete_, _post_. Default is _get_.
+		- async `Boolean` enables an asynchronous request. Defaults to _false_.
+		- data `String` is a url encoded string of parameters to send.
+		- callback `Function` is called on status 200 (i.e. success callback).
+    - headers `Object` is a JSON object with key:value pairs that get set in the request's header set.
 
 	### response ###
 
-	- The response available to the callback function as 'this', it is not passed in.
+	- The response is available to the callback function as `this`.
+	- The response is not passed into the callback.
 	- `this.reponseText` will have the resulting data from the file.
 
 	### example ###
@@ -492,11 +557,24 @@ xui.extend({
 
 	or
 
+		// same as using 'inner'
 		x$('#status').xhr('/status.html');
 
-		x$('#left-panel').xhr('/panel', {callback:function(){ alert("All Done!") }});
+		// define a callback, enable async execution and add a request header
+		x$('#left-panel').xhr('/panel', {
+		    async: true,
+		    callback: function() {
+		        alert("The response is " + this.responseText);
+		    },
+        headers:{
+            'Mobile':'true'
+        }
+		});
 
-		x$('#left-panel').xhr('/panel', function(){ alert(this.responseText) }); 
+		// define a callback with the shorthand syntax
+		x$('#left-panel').xhr('/panel', function() {
+		    alert("The response is " + this.responseText);
+		});
 */
     xhr:function(location, url, options) {
 
@@ -520,20 +598,23 @@ xui.extend({
         var that   = this,
             req    = new XMLHttpRequest(),
             method = o.method || 'get',
-            async  = o.async || false,           
+            async  = (typeof o.async != 'undefined'?o.async:true),           
             params = o.data || null,
-            i = 0;
+            key;
 
         req.queryString = params;
         req.open(method, url, async);
 
-        if (o.headers) {
-            for (; i<o.headers.length; i++) {
-              req.setRequestHeader(o.headers[i].name, o.headers[i].value);
+        for (key in o.headers) {
+            if (o.headers.hasOwnProperty(key)) {
+              req.setRequestHeader(key, o.headers[key]);
             }
         }
 
-        req.handleResp = (o.callback != null) ? o.callback : function() { that.html(location, this.responseText); };
+        // Set "X-Request-With" header
+        req.setRequestHeader('X-Request-With','XMLHttpRequest');
+
+        req.handleResp = (o.callback != null) ? o.callback : function() { that.html(location, req.responseText); };
         req.handleError = (o.error && typeof o.error == 'function') ? o.error : function () {};
         function hdl(){ 
             if(req.readyState==4) {
@@ -551,7 +632,6 @@ xui.extend({
 
         return this;
     }
-// --
 });
 /**
  *
@@ -2257,7 +2337,6 @@ var posProcess = function(selector, context){
 window.Sizzle = Sizzle;
 
 })();
-
 /* Cross-Browser Split 1.0.1
 (c) Steven Levithan <stevenlevithan.com>; MIT License
 An ECMA-compliant, uniform cross-browser split method */
@@ -2354,5 +2433,48 @@ cbSplit._nativeSplit = String.prototype.split;
 
 try {var a = "a".split(/a/)[0].nodeType;}
 catch(e){ String.prototype.split = function (separator, limit) { return cbSplit(this, separator, limit); }; }
+!function (context, doc) {
+  var fns = [], ol, fn, f = false,
+      testEl = doc.documentElement,
+      hack = testEl.doScroll,
+      domContentLoaded = 'DOMContentLoaded',
+      addEventListener = 'addEventListener',
+      onreadystatechange = 'onreadystatechange',
+      loaded = /^loade|c/.test(doc.readyState);
 
+  function flush(i) {
+    loaded = 1;
+    while (i = fns.shift()) { i() }
+  }
+  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+    doc.removeEventListener(domContentLoaded, fn, f);
+    flush();
+  }, f);
+
+
+  hack && doc.attachEvent(onreadystatechange, (ol = function () {
+    if (/^c/.test(doc.readyState)) {
+      doc.detachEvent(onreadystatechange, ol);
+      flush();
+    }
+  }));
+
+  context['domReady'] = hack ?
+    function (fn) {
+      self != top ?
+        loaded ? fn() : fns.push(fn) :
+        function () {
+          try {
+            testEl.doScroll('left');
+          } catch (e) {
+            return setTimeout(function() { context['domReady'](fn) }, 50);
+          }
+          fn();
+        }()
+    } :
+    function (fn) {
+      loaded ? fn() : fns.push(fn);
+    };
+
+}(this, document);
 })();

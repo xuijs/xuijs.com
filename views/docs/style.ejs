@@ -27,7 +27,8 @@ x$('.button').setStyle('backgroundColor', '#EFEFEF');
 
 <h2>getStyle</h2>
 
-<p>Retuns the value of a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.</p>
+<p>Returns the value of a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.
+Please note that the return type is always an Array of strings. Each string corresponds to the CSS property value for the element with the same index in the xui collection.</p>
 
 <h3>syntax</h3>
 
@@ -43,11 +44,17 @@ x$('.button').setStyle('backgroundColor', '#EFEFEF');
 
 <h3>example</h3>
 
-<pre><code>x$('ul#nav li.trunk').getStyle('font-size');
-x$('ul#nav li.trunk').getStyle('fontSize');
+<pre><code>   &lt;ul id="nav"&gt;
+       &lt;li class="trunk" style="font-size:12px;background-color:blue;"&gt;hi&lt;/li&gt;
+       &lt;li style="font-size:14px;"&gt;there&lt;/li&gt;
+   &lt;/ul&gt;
+
+x$('ul#nav li.trunk').getStyle('font-size'); // returns ['12px']
+x$('ul#nav li.trunk').getStyle('fontSize'); // returns ['12px']
+x$('ul#nav li').getStyle('font-size'); // returns ['12px', '14px']
 
 x$('ul#nav li.trunk').getStyle('backgroundColor', function(prop) {
-    return (prop === 'blue') ? 'green' : 'blue';
+    alert(prop); // alerts 'blue' 
 });
 </code></pre>
 
@@ -57,7 +64,7 @@ x$('ul#nav li.trunk').getStyle('backgroundColor', function(prop) {
 
 <h3>syntax</h3>
 
-<pre><code>$( selector ).addClass( className );
+<pre><code>x$( selector ).addClass( className );
 </code></pre>
 
 <h3>arguments</h3>
@@ -68,16 +75,16 @@ x$('ul#nav li.trunk').getStyle('backgroundColor', function(prop) {
 
 <h3>example</h3>
 
-<pre><code>$('.foo').addClass('awesome');
+<pre><code>x$('.foo').addClass('awesome');
 </code></pre>
 
 <h2>hasClass</h2>
 
-<p>Checks if the class is on the element.</p>
+<p>Checks if the class is on <em>all</em> elements in the xui collection.</p>
 
 <h3>syntax</h3>
 
-<pre><code>$( selector ).hasClass( className, fn );
+<pre><code>x$( selector ).hasClass( className, fn );
 </code></pre>
 
 <h3>arguments</h3>
@@ -95,19 +102,26 @@ function(element) {
 
 <h3>example</h3>
 
-<pre><code>// returns true or false
-$('#foo').hasClass('awesome');
+<pre><code>   &lt;div id="foo" class="foo awesome"&gt;&lt;/div&gt;
+   &lt;div class="foo awesome"&gt;&lt;/div&gt;
+   &lt;div class="foo"&gt;&lt;/div&gt;
 
-// returns true or false,
-// and calls the function with each element
-$('.foo').hasClass('awesome', function(element) {
-    console.log('Hey, I found: ' + element);
+// returns true
+x$('#foo').hasClass('awesome');
+
+// returns false (not all elements with class 'foo' have class 'awesome'),
+// but the callback gets invoked with the elements that did match the 'awesome' class
+x$('.foo').hasClass('awesome', function(element) {
+    console.log('Hey, I found: ' + element + ' with class "awesome"');
 });
+
+// returns true (all DIV elements have the 'foo' class)
+x$('div').hasClass('foo');
 </code></pre>
 
 <h2>removeClass</h2>
 
-<p>Removes the class from all elements in the collection.</p>
+<p>Removes the specified class from all elements in the collection. If no class is specified, removes all classes from the collection.</p>
 
 <h3>syntax</h3>
 
@@ -117,12 +131,34 @@ $('.foo').hasClass('awesome', function(element) {
 <h3>arguments</h3>
 
 <ul>
-<li>className <code>String</code> is the name of the CSS class to remove.</li>
+<li>className <code>String</code> is the name of the CSS class to remove. If not specified, then removes all classes from the matched elements. <em>(optional)</em></li>
 </ul>
 
 <h3>example</h3>
 
 <pre><code>x$('.foo').removeClass('awesome');
+</code></pre>
+
+<h2>toggleClass</h2>
+
+<p>Removes the specified class if it exists on the elements in the xui collection, otherwise adds it. </p>
+
+<h3>syntax</h3>
+
+<pre><code>x$( selector ).toggleClass( className );
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>className <code>String</code> is the name of the CSS class to toggle.</li>
+</ul>
+
+<h3>example</h3>
+
+<pre><code>   &lt;div class="foo awesome"&gt;&lt;/div&gt;
+
+x$('.foo').toggleClass('awesome'); // div above loses its awesome class.
 </code></pre>
 
 <h2>css</h2>

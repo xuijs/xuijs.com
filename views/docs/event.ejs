@@ -122,3 +122,28 @@ x$('button').un('click', greeting);
 x$('.target').fire('touchstart');
 </code></pre>
 
+<h2>ready</h2>
+
+<p><a href="event#Event">Event</a> handler for when the <a href="dom#DOM">DOM</a> is ready. Thank you <a class="external" href="http://www.github.com/ded/domready">domready</a>!</p>
+
+<h3>syntax</h3>
+
+<pre><code>x$.ready(handler);
+</code></pre>
+
+<h3>arguments</h3>
+
+<ul>
+<li>handler <code>Function</code> event handler to be attached to the "dom is ready" event.</li>
+</ul>
+
+<h3>example</h3>
+
+<p>x$.ready(function() {
+     alert('mah doms are ready');
+   });</p>
+
+<p>xui.ready(function() {
+     console.log('ready, set, go!');
+   });</p>
+

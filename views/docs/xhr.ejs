@@ -13,7 +13,7 @@
 
 <p>It is always invoked on an element collection and uses the behaviour of <code>html</code>.</p>
 
-<p>If there no callback, then the <code>responseText</code> will be inserted into the elements in the collection.</p>
+<p>If there is no callback, then the <code>responseText</code> will be inserted into the elements in the collection.</p>
 
 <h3>syntax</h3>
 
@@ -35,13 +35,14 @@
 <ul>
 <li>location <code>String</code> is the location to insert the <code>responseText</code>. See <code>html</code> for values.</li>
 <li>url <code>String</code> is where to send the request.</li>
-<li>fn <code>Function</code> is called on status 200 (i.e. sucess callback).</li>
+<li>fn <code>Function</code> is called on status 200 (i.e. success callback).</li>
 <li>options <code>Object</code> is a JSON object with one or more of the following:
 <ul>
 <li>method <code>String</code> can be <em>get</em>, <em>put</em>, <em>delete</em>, <em>post</em>. Default is <em>get</em>.</li>
 <li>async <code>Boolean</code> enables an asynchronous request. Defaults to <em>false</em>.</li>
 <li>data <code>String</code> is a url encoded string of parameters to send.</li>
 <li>callback <code>Function</code> is called on status 200 (i.e. success callback).</li>
+<li>headers <code>Object</code> is a JSON object with key:value pairs that get set in the request's header set.</li>
 </ul></li>
 </ul>
 
@@ -68,12 +69,15 @@ x$('#status').xhr('after', '/status.html');
 <pre><code>// same as using 'inner'
 x$('#status').xhr('/status.html');
 
-// define a callback and enable async execution
+// define a callback, enable async execution and add a request header
 x$('#left-panel').xhr('/panel', {
     async: true,
     callback: function() {
         alert("The response is " + this.responseText);
-    }
+    },
+   headers:{
+       'Mobile':'true'
+   }
 });
 
 // define a callback with the shorthand syntax
