@@ -18,6 +18,7 @@ copy-downloads:
 	cd ../xui && ./build --minify
 	cd ../xui && ./build profile=bb --minify
 	cd ../xui && ./build profile=ie --minify
+	mkdir -p ./public/downloads
 	cp ./../xui/lib/xui-${VERSION}.js 		./public/downloads/xui-${VERSION}.js
 	cp ./../xui/lib/xui-${VERSION}.min.js	./public/downloads/xui-${VERSION}.min.js
 	cp ./../xui/lib/xui-bb-${VERSION}.js		./public/downloads/xui-bb-${VERSION}.js
