@@ -1,7 +1,12 @@
 VERSION = `cat ./../xui/VERSION`
 
-deploy: min copy-docs copy-downloads copy-tests
-	git push joyent master
+deploy: update
+	git checkout -b deploy
+	git commit -am 'new deploy!'
+	git push joyent deploy:master
+	git checkout master
+	git branch -D deploy
+	sed -i -e "s/${VERSION}/__VERSION__/g" views/downloads.html.ejs views/layout.ejs views/test.html.ejs
 
 min:
 	java -jar ./lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar ./public/grid.css -o ./public/grid.min.css
@@ -34,5 +39,8 @@ copy-tests:
 	cp ./../xui/packages/qunit/qunit/qunit.js ./public/tests/packages/qunit/qunit/qunit.js
 	cp -r ./../xui/spec ./public/tests/tests
 	cp -r ./../xui/lib  ./public/tests/lib
+
+update: min copy-docs copy-downloads copy-tests
+	sed -i -e "s/__VERSION__/${VERSION}/g" views/downloads.html.ejs views/layout.ejs views/test.html.ejs
 
 .PHONY: all
