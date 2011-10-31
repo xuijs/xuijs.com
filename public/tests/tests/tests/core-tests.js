@@ -218,11 +218,16 @@ CoreTests.prototype.run = function () {
             equals(document.getElementById('html-test-outer'), null, 'Selected element should be gone if replaced with element with different ID');
         });
         test( 'Inserting html via "top"', function(){
-            expect(2);
+            expect(3);
             var numOriginalElements = topTest[0].childNodes.length;
             topTest.html('top', '<div>come out on top</div>');
             equals(topTest[0].childNodes[0].innerHTML, 'come out on top', 'Should create a new element at head of element\'s childNodes'); 
             equals(topTest[0].childNodes.length, numOriginalElements+1, 'Existing element inside selected element should remain after a "top" insertion');
+
+            var content = "<a id='closeCart' onclick='miniCart.hideCart()'>X</a>";
+            x$("#miniCartHeader").html('top', content);
+            var miniCart = document.getElementById('miniCartHeader');
+            equals(miniCart.innerHTML, content.replace(/'/g,'"'), 'inserting HTML via "top" should work with anchor tags containing onclick and id attributes');
         });
         test( 'Inserting html via "bottom"', function(){
             // Base case
@@ -288,7 +293,7 @@ CoreTests.prototype.run = function () {
         });
         
         test('.attr()', function() {
-            expect(6);
+            expect(9);
             var checkbox = x$('#first-check');
             checkbox.attr('checked',true);
             equals(checkbox[0].checked, true, 'Should be able to check a checkbox-type input element');
@@ -310,6 +315,16 @@ CoreTests.prototype.run = function () {
             equals(inputValueBefore[0], "initial value", 'should existing string in input when calling attr() with one parameter.');
             textInput.attr('value','some new value');
             equals(textInput[0].value, 'some new value', 'using attr() to set value on text inputs should work.');
+            
+            equals(0, x$('#dom_tests').attr('non-existing').length, 'attr() on non-existing attributes should return xui objects of length 0');
+
+            var pwdInput = document.getElementById('p');
+            var initValue = pwdInput.value;
+            var retrievedValue = x$('#p').attr('value');
+            equals(initValue, retrievedValue, 'attr("value") should return initial value set in a password field');
+
+            pwdInput.value = 'newvalue';
+            equals(pwdInput.value, x$('#p').attr('value'), 'attr("value") should return changed values set in a password field');
         });
 
     // --
@@ -362,14 +377,14 @@ CoreTests.prototype.run = function () {
             equals(window.headers['foo'], 'bar', 'Should call setRequestHeader correctly');
         });
 
-        test( 'Should have X-Request-With header set to XMLHttpRequest', function() {
+        test( 'Should have X-Requested-With header set to XMLHttpRequest', function() {
             expect(1);
             x.xhr("helpers/example.html", {
                 headers: {
                     'foo':'bar'
                 }
             });
-            equals(window.headers['X-Request-With'], 'XMLHttpRequest', 'Should set X-Request-With header to "XMLHttpRequest"');
+            equals(window.headers['X-Requested-With'], 'XMLHttpRequest', 'Should set X-Requested-With header to "XMLHttpRequest"');
         });
 
     // --

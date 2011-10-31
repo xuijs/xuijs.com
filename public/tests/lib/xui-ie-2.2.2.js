@@ -394,6 +394,249 @@ xui.fn = xui.prototype = {
 xui.fn.find.prototype = xui.fn;
 xui.extend = xui.fn.extend;
 /**
+	Fx
+	==
+
+	Animations, transforms, and transitions for getting the most out of hardware accelerated CSS.
+
+*/
+
+xui.extend({
+
+/**
+	Tween
+	-----
+
+	Transforms a CSS property's value.
+
+	### syntax ###
+
+		x$( selector ).tween( properties, callback );
+
+	### arguments ###
+
+	- properties `Object` or `Array` of CSS properties to tween.
+	    - `Object` is a JSON object that defines the CSS properties.
+	    - `Array` is a `Object` set that is tweened sequentially.
+	- callback `Function` to be called when the animation is complete. _(optional)_.
+
+	### properties ###
+
+	A property can be any CSS style, referenced by the JavaScript notation.
+
+	A property can also be an option from [emile.js](https://github.com/madrobby/emile):
+
+	- duration `Number` of the animation in milliseconds.
+	- after `Function` is called after the animation is finished.
+	- easing `Function` allows for the overriding of the built-in animation function.
+
+			// Receives one argument `pos` that indicates position
+			// in time between animation's start and end.
+			function(pos) {
+			    // return the new position
+			    return (-Math.cos(pos * Math.PI) / 2) + 0.5;
+			}
+
+	### example ###
+
+		// one JSON object
+		x$('#box').tween({ left:'100px', backgroundColor:'blue' });
+		x$('#box').tween({ left:'100px', backgroundColor:'blue' }, function() {
+		    alert('done!');
+		});
+		
+		// array of two JSON objects
+		x$('#box').tween([{left:'100px', backgroundColor:'green', duration:.2 }, { right:'100px' }]); 
+*/
+	tween: function( props, callback ) {
+
+    // creates an options obj for emile
+    var emileOpts = function(o) {
+      var options = {};
+      "duration after easing".split(' ').forEach( function(p) {
+        if (props[p]) {
+            options[p] = props[p];
+            delete props[p];
+        }
+      });
+      return options;
+    }
+
+    // serialize the properties into a string for emile
+    var serialize = function(props) {
+      var serialisedProps = [], key;
+      if (typeof props != string) {
+        for (key in props) {
+          serialisedProps.push(cssstyle(key) + ':' + props[key]);
+        }
+        serialisedProps = serialisedProps.join(';');
+      } else {
+        serialisedProps = props;
+      }
+      return serialisedProps;
+    };
+
+    // queued animations
+    /* wtf is this?
+		if (props instanceof Array) {
+		    // animate each passing the next to the last callback to enqueue
+		    props.forEach(function(a){
+		      
+		    });
+		}
+    */
+    // this branch means we're dealing with a single tween
+    var opts = emileOpts(props);
+    var prop = serialize(props);
+		
+		return this.each(function(e){
+			emile(e, prop, opts, callback);
+		});
+	}
+});
+/**
+	XHR
+	===
+
+	Everything related to remote network connections.
+
+ */
+xui.extend({	
+/**
+	xhr
+	---
+
+	The classic `XMLHttpRequest` sometimes also known as the Greek God: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
+
+	### detail ###
+
+	This method has a few new tricks.
+
+	It is always invoked on an element collection and uses the behaviour of `html`.
+
+	If there is no callback, then the `responseText` will be inserted into the elements in the collection.
+
+	### syntax ###
+
+		x$( selector ).xhr( location, url, options )
+
+	or accept a url with a default behavior of inner:
+
+		x$( selector ).xhr( url, options );
+
+	or accept a url with a callback:
+	
+		x$( selector ).xhr( url, fn );
+
+	### arguments ###
+
+	- location `String` is the location to insert the `responseText`. See `html` for values.
+	- url `String` is where to send the request.
+	- fn `Function` is called on status 200 (i.e. success callback).
+	- options `Object` is a JSON object with one or more of the following:
+		- method `String` can be _get_, _put_, _delete_, _post_. Default is _get_.
+		- async `Boolean` enables an asynchronous request. Defaults to _false_.
+		- data `String` is a url encoded string of parameters to send.
+                - error `Function` is called on error or status that is not 200. (i.e. failure callback).
+		- callback `Function` is called on status 200 (i.e. success callback).
+    - headers `Object` is a JSON object with key:value pairs that get set in the request's header set.
+
+	### response ###
+
+	- The response is available to the callback function as `this`.
+	- The response is not passed into the callback.
+	- `this.reponseText` will have the resulting data from the file.
+
+	### example ###
+
+		x$('#status').xhr('inner', '/status.html');
+		x$('#status').xhr('outer', '/status.html');
+		x$('#status').xhr('top',   '/status.html');
+		x$('#status').xhr('bottom','/status.html');
+		x$('#status').xhr('before','/status.html');
+		x$('#status').xhr('after', '/status.html');
+
+	or
+
+		// same as using 'inner'
+		x$('#status').xhr('/status.html');
+
+		// define a callback, enable async execution and add a request header
+		x$('#left-panel').xhr('/panel', {
+		    async: true,
+		    callback: function() {
+		        alert("The response is " + this.responseText);
+		    },
+        headers:{
+            'Mobile':'true'
+        }
+		});
+
+		// define a callback with the shorthand syntax
+		x$('#left-panel').xhr('/panel', function() {
+		    alert("The response is " + this.responseText);
+		});
+*/
+    xhr:function(location, url, options) {
+
+      // this is to keep support for the old syntax (easy as that)
+		if (!/^(inner|outer|top|bottom|before|after)$/.test(location)) {
+            options = url;
+            url = location;
+            location = 'inner';
+        }
+
+        var o = options ? options : {};
+        
+        if (typeof options == "function") {
+            // FIXME kill the console logging
+            // console.log('we been passed a func ' + options);
+            // console.log(this);
+            o = {};
+            o.callback = options;
+        };
+        
+        var that   = this,
+            req    = new XMLHttpRequest(),
+            method = o.method || 'get',
+            async  = (typeof o.async != 'undefined'?o.async:true),
+            params = o.data || null,
+            key;
+
+        req.queryString = params;
+        req.open(method, url, async);
+
+        // Set "X-Requested-With" header
+        req.setRequestHeader('X-Requested-With','XMLHttpRequest');
+
+        if (method.toLowerCase() == 'post') req.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        for (key in o.headers) {
+            if (o.headers.hasOwnProperty(key)) {
+              req.setRequestHeader(key, o.headers[key]);
+            }
+        }
+
+        req.handleResp = (o.callback != null) ? o.callback : function() { that.html(location, req.responseText); };
+        req.handleError = (o.error && typeof o.error == 'function') ? o.error : function () {};
+        function hdl(){
+            if(req.readyState==4) {
+                delete(that.xmlHttpRequest);
+                if(req.status===0 || req.status==200) req.handleResp(); 
+                if((/^[45]/).test(req.status)) req.handleError();
+            }
+        }
+        if(async) {
+            req.onreadystatechange = hdl;
+            this.xmlHttpRequest = req;
+        }
+        req.send(params);
+        if(!async) hdl();
+
+        return this;
+    }
+});
+/**
 	DOM
 	===
 
@@ -552,7 +795,7 @@ xui.extend({
     attr: function(attribute, val) {
         if (arguments.length == 2) {
             return this.each(function(el) {
-                if (el.tagName == 'input' && attribute == 'value') el.value = val;
+                if (el.tagName && el.tagName.toLowerCase() == 'input' && attribute == 'value') el.value = val;
                 else if (el.setAttribute) {
                   if (attribute == 'checked' && (val == '' || val == false || typeof val == "undefined")) el.removeAttribute(attribute);
                   else el.setAttribute(attribute, val);
@@ -561,9 +804,9 @@ xui.extend({
         } else {
             var attrs = [];
             this.each(function(el) {
-                if (el.tagName == 'input' && attribute == 'value') attrs.push(el.value);
-                else if (el.getAttribute) {
-                    attrs.push(el.getAttribute(attribute) || '');
+                if (el.tagName && el.tagName.toLowerCase() == 'input' && attribute == 'value') attrs.push(el.value);
+                else if (el.getAttribute && el.getAttribute(attribute)) {
+                    attrs.push(el.getAttribute(attribute));
                 }
             });
             return attrs;
@@ -615,162 +858,85 @@ function clean(collection) {
     });
 }
 /**
-	Event
-	=====
-
-	A good old fashioned events with new skool handling. Shortcuts exist for:
-
-	- click
-	- load
-	- touchstart
-	- touchmove
-	- touchend
-	- touchcancel
-	- gesturestart
-	- gesturechange
-	- gestureend
-	- orientationchange
-	
-*/
-xui.events = {}; var cache = {};
+ *
+ * @namespace {Event}
+ * @example
+ *
+ * Event
+ * ---
+ *	
+ * A good old fashioned event handling system.
+ * 
+ */
 xui.extend({
-
-/**
-	on
-	--
-
-	Registers a callback function to a DOM event on the element collection.
-
-	### syntax ###
-
-		x$( 'button' ).on( type, fn );
-
-	or
-
-		x$( 'button' ).click( fn );
-
-	### arguments ###
-
-	- type `String` is the event to subscribe (e.g. _load_, _click_, _touchstart_, etc).
-	- fn `Function` is a callback function to execute when the event is fired.
-
-	### example ###
-
-		x$( 'button' ).on( 'click', function(e) {
-		    alert('hey that tickles!');
-		});
-
-	or
-
-		x$(window).load(function(e) {
-		  x$('.save').touchstart( function(evt) { alert('tee hee!'); }).css(background:'grey');
-		});
-*/
-    on: function(type, fn, details) {
+	
+	
+	/**	
+	 *
+	 * Register callbacks to DOM events.
+	 * 
+	 * @param {Event} type The event identifier as a string.
+	 * @param {Function} fn The callback function to invoke when the event is raised.
+	 * @return self
+	 * @example
+	 * 
+	 * ### on
+	 * 
+	 * Registers a callback function to a DOM event on the element collection.
+	 * 
+	 * For more information see:
+	 * 
+	 * - http://developer.apple.com/webapps/docs/documentation/AppleApplications/Reference/SafariWebContent/HandlingEvents/chapter_7_section_1.html#//apple_ref/doc/uid/TP40006511-SW1
+	 *
+	 * syntax:
+	 *
+	 * 		x$('button').on( 'click', function(e){ alert('hey that tickles!') });
+	 * 
+	 * or...
+	 * 
+	 * 		x$('a.save').click(function(e){ alert('tee hee!') });
+	 *
+	 * arguments:
+	 *
+	 * - type:string the event to subscribe to click|load|etc
+	 * - fn:function a callback function to execute when the event is fired
+	 *
+	 * example:
+	 * 	
+	 * 		x$(window).load(function(e){
+	 * 			x$('.save').touchstart( function(evt){ alert('tee hee!') }).css(background:'grey');	
+	 *  	});
+	 * 	
+	 */
+	
+	touch: eventSupported('ontouchstart'),
+	
+	
+	
+	on: function(type, fn) {
         return this.each(function (el) {
-            if (xui.events[type]) {
-                var id = _getEventID(el), 
-                    responders = _getRespondersForEvent(id, type);
-                
-                details = details || {};
-                details.handler = function (event, data) {
-                    xui.fn.fire.call(xui(this), type, data);
-                };
-                
-                // trigger the initialiser - only happens the first time around
-                if (!responders.length) {
-                    xui.events[type].call(el, details);
-                }
-            } 
-            el.addEventListener(type, _createResponder(el, type, fn), false);
+            if (window.addEventListener) 
+                el.addEventListener(type, _createResponder(el, type, fn), false);
+            else 
+                el.attachEvent('on' + type, fn);
+			
         });
     },
 
-/**
-	un
-	--
-
-	Unregisters a specific callback, or if no specific callback is passed in, 
-	unregisters all event callbacks of a specific type.
-
-	### syntax ###
-
-	Unregister the given function, for the given type, on all button elements:
-
-		x$( 'button' ).un( type, fn );
-
-	Unregisters all callbacks of the given type, on all button elements:
-
-		x$( 'button' ).un( type );
-
-	### arguments ###
-
-	- type `String` is the event to unsubscribe (e.g. _load_, _click_, _touchstart_, etc).
-	- fn `Function` is the callback function to unsubscribe _(optional)_.
-
-	### example ###
-
-		// First, create a click event that display an alert message
-		x$('button').on('click', function() {
-		    alert('hi!');
-		});
-		
-		// Now unsubscribe all functions that response to click on all button elements
-		x$('button').un('click');
-
-	or
-
-		var greeting = function() { alert('yo!'); };
-		
-		x$('button').on('click', greeting);
-		x$('button').on('click', function() {
-		    alert('hi!');
-		});
-		
-		// When any button is clicked, the 'hi!' message will fire, but not the 'yo!' message.
-		x$('button').un('click', greeting);
-*/
-    un: function(type, fn) {
+    un: function(type) {
+        var that = this;
         return this.each(function (el) {
             var id = _getEventID(el), responders = _getRespondersForEvent(id, type), i = responders.length;
 
             while (i--) {
-                if (fn === undefined || fn.guid === responders[i].guid) {
-                    el.removeEventListener(type, responders[i], false);
-                    removex(cache[id][type], i, 1);
-                }
+                el.removeEventListener(type, responders[i], false);
             }
 
-            if (cache[id][type].length === 0) delete cache[id][type];
-            for (var t in cache[id]) {
-                return;
-            }
             delete cache[id];
-        });
-    },
+  	    });
+  	},
 
-/**
-	fire
-	----
-
-	Triggers a specific event on the xui collection.
-
-	### syntax ###
-
-		x$( selector ).fire( type, data );
-
-	### arguments ###
-
-	- type `String` is the event to fire (e.g. _load_, _click_, _touchstart_, etc).
-	- data `Object` is a JSON object to use as the event's `data` property.
-
-	### example ###
-
-		x$('button#reset').fire('click', { died:true });
-		
-		x$('.target').fire('touchstart');
-*/
-    fire: function (type, data) {
+  	fire: function (type, data) {
         return this.each(function (el) {
             if (el == document && !el.dispatchEvent)
                 el = document.documentElement;
@@ -779,76 +945,23 @@ xui.extend({
             event.initEvent(type, true, true);
             event.data = data || {};
             event.eventName = type;
-          
+            
             el.dispatchEvent(event);
   	    });
   	}
+  
+// --
 });
 
-"click load submit touchstart touchmove touchend touchcancel gesturestart gesturechange gestureend orientationchange".split(' ').forEach(function (event) {
-  xui.fn[event] = function(action) { return function (fn) { return fn ? this.on(action, fn) : this.fire(action); }; }(event);
-});
-
-// patched orientation support - Andriod 1 doesn't have native onorientationchange events
-xui(window).on('load', function() {
-    if (!('onorientationchange' in document.body)) {
-      (function (w, h) {
-        xui(window).on('resize', function () {
-          var portraitSwitch = (window.innerWidth < w && window.innerHeight > h) && (window.innerWidth < window.innerHeight),
-              landscapeSwitch = (window.innerWidth > w && window.innerHeight < h) && (window.innerWidth > window.innerHeight);
-          if (portraitSwitch || landscapeSwitch) {
-            window.orientation = portraitSwitch ? 0 : 90; // what about -90? Some support is better than none
-            xui('body').fire('orientationchange'); // will this bubble up?
-            w = window.innerWidth;
-            h = window.innerHeight;
-          }
-        });
-      })(window.innerWidth, window.innerHeight);
-    }
-});
-
-// this doesn't belong on the prototype, it belongs as a property on the xui object
-xui.touch = (function () {
-  try{
-    return !!(document.createEvent("TouchEvent").initTouchEvent)
-  } catch(e) {
-    return false;
-  };
-})();
-
-/**
-	ready
-	----
-
-  Event handler for when the DOM is ready. Thank you [domready](http://www.github.com/ded/domready)!
-
-	### syntax ###
-
-		x$.ready(handler);
-
-	### arguments ###
-
-	- handler `Function` event handler to be attached to the "dom is ready" event.
-
-	### example ###
-
-    x$.ready(function() {
-      alert('mah doms are ready');
-    });
-
-    xui.ready(function() {
-      console.log('ready, set, go!');
-    });
-
-*/
-xui.ready = function(handler) {
-  domReady(handler);
+function eventSupported(event) {
+    var element = document.createElement('i');
+    return event in element || element.setAttribute && element.setAttribute(event, "return;") || false;
 }
 
 // lifted from Prototype's (big P) event model
 function _getEventID(element) {
-    if (element._xuiEventID) return element._xuiEventID;
-    return element._xuiEventID = ++_getEventID.id;
+    if (element._xuiEventID) return element._xuiEventID[0];
+    return element._xuiEventID = [++_getEventID.id];
 }
 
 _getEventID.id = 1;
@@ -867,120 +980,21 @@ function _createResponder(element, eventName, handler) {
             event.stopPropagation();
         } 
     };
-    
-    responder.guid = handler.guid = handler.guid || ++_getEventID.id;
     responder.handler = handler;
     r.push(responder);
     return responder;
 }
 /**
-	Fx
-	==
-
-	Animations, transforms, and transitions for getting the most out of hardware accelerated CSS.
-
-*/
-
-xui.extend({
-
-/**
-	Tween
-	-----
-
-	Transforms a CSS property's value.
-
-	### syntax ###
-
-		x$( selector ).tween( properties, callback );
-
-	### arguments ###
-
-	- properties `Object` or `Array` of CSS properties to tween.
-	    - `Object` is a JSON object that defines the CSS properties.
-	    - `Array` is a `Object` set that is tweened sequentially.
-	- callback `Function` to be called when the animation is complete. _(optional)_.
-
-	### properties ###
-
-	A property can be any CSS style, referenced by the JavaScript notation.
-
-	A property can also be an option from [emile.js](https://github.com/madrobby/emile):
-
-	- duration `Number` of the animation in milliseconds.
-	- after `Function` is called after the animation is finished.
-	- easing `Function` allows for the overriding of the built-in animation function.
-
-			// Receives one argument `pos` that indicates position
-			// in time between animation's start and end.
-			function(pos) {
-			    // return the new position
-			    return (-Math.cos(pos * Math.PI) / 2) + 0.5;
-			}
-
-	### example ###
-
-		// one JSON object
-		x$('#box').tween({ left:'100px', backgroundColor:'blue' });
-		x$('#box').tween({ left:'100px', backgroundColor:'blue' }, function() {
-		    alert('done!');
-		});
-		
-		// array of two JSON objects
-		x$('#box').tween([{left:'100px', backgroundColor:'green', duration:.2 }, { right:'100px' }]); 
-*/
-	tween: function( props, callback ) {
-
-    // creates an options obj for emile
-    var emileOpts = function(o) {
-      var options = {};
-      "duration after easing".split(' ').forEach( function(p) {
-        if (props[p]) {
-            options[p] = props[p];
-            delete props[p];
-        }
-      });
-      return options;
-    }
-
-    // serialize the properties into a string for emile
-    var serialize = function(props) {
-      var serialisedProps = [], key;
-      if (typeof props != string) {
-        for (key in props) {
-          serialisedProps.push(cssstyle(key) + ':' + props[key]);
-        }
-        serialisedProps = serialisedProps.join(';');
-      } else {
-        serialisedProps = props;
-      }
-      return serialisedProps;
-    };
-
-    // queued animations
-    /* wtf is this?
-		if (props instanceof Array) {
-		    // animate each passing the next to the last callback to enqueue
-		    props.forEach(function(a){
-		      
-		    });
-		}
-    */
-    // this branch means we're dealing with a single tween
-    var opts = emileOpts(props);
-    var prop = serialize(props);
-		
-		return this.each(function(e){
-			emile(e, prop, opts, callback);
-		});
-	}
-});
-/**
-	Style
-	=====
-
-	Everything related to appearance. Usually, this is CSS.
-
-*/
+ *
+ * @namespace {Style}
+ * @example
+ *
+ * Style
+ * ---
+ *	
+ * Anything related to how things look. Usually, this is CSS.
+ * 
+ */
 function hasClass(el, className) {
     return getClassRegEx(className).test(el.className);
 }
@@ -994,96 +1008,98 @@ function trim(text) {
 }
 
 xui.extend({
-/**
-	setStyle
-	--------
 
-	Sets the value of a single CSS property.
-
-	### syntax ###
-
-		x$( selector ).setStyle( property, value );
-
-	### arguments ###
-
-	- property `String` is the name of the property to modify.
-	- value `String` is the new value of the property.
-
-	### example ###
-
-		x$('.flash').setStyle('color', '#000');
-		x$('.button').setStyle('backgroundColor', '#EFEFEF');
-*/
+    /**
+	 * 
+	 * Sets a single CSS property to a new value.
+	 * 
+	 * @param {String} prop The property to set.
+	 * @param {String} val The value to set the property.
+	 * @return self
+	 * @example
+	 *
+	 * ### setStyle
+	 *	
+	 * syntax: 
+	 *
+	 * 	x$(selector).setStyle(property, value);
+	 *
+	 * arguments: 
+	 *
+	 * - property:string the property to modify
+	 * - value:string the property value to set
+	 *
+	 * example:
+	 * 
+	 * 	x$('.txt').setStyle('color', '#000');
+	 * 
+	 */
     setStyle: function(prop, val) {
-        prop = domstyle(prop);
         return this.each(function(el) {
             el.style[prop] = val;
         });
     },
 
-/**
-	getStyle
-	--------
-
-	Returns the value of a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.
-	Please note that the return type is always an Array of strings. Each string corresponds to the CSS property value for the element with the same index in the xui collection.
-
-	### syntax ###
-
-		x$( selector ).getStyle( property, callback );
-
-	### arguments ###
-
-	- property `String` is the name of the CSS property to get.
-	- callback `Function` is called on each element in the collection and passed the property _(optional)_.
-
-	### example ###
-        <ul id="nav">
-            <li class="trunk" style="font-size:12px;background-color:blue;">hi</li>
-            <li style="font-size:14px;">there</li>
-        </ul>
-        
-		x$('ul#nav li.trunk').getStyle('font-size'); // returns ['12px']
-		x$('ul#nav li.trunk').getStyle('fontSize'); // returns ['12px']
-		x$('ul#nav li').getStyle('font-size'); // returns ['12px', '14px']
-		
-		x$('ul#nav li.trunk').getStyle('backgroundColor', function(prop) {
-		    alert(prop); // alerts 'blue' 
-		});
-*/
+    /**
+	 * 
+	 * Retuns a single CSS property. Can also invoke a callback to perform more specific processing tasks related to the property value.
+	 * 
+	 * @param {String} prop The property to retrieve.
+	 * @param {Function} callback A callback function to invoke with the property value.
+	 * @return self if a callback is passed, otherwise the individual property requested
+	 * @example
+	 *
+	 * ### getStyle
+	 *	
+	 * syntax: 
+	 *
+	 * 	x$(selector).getStyle(property, callback);
+	 *
+	 * arguments: 
+	 * 
+	 * - property:string a css key (for example, border-color NOT borderColor)
+	 * - callback:function (optional) a method to call on each element in the collection 
+	 *
+	 * example:
+	 *
+	 *	x$('ul#nav li.trunk').getStyle('font-size');
+	 *	
+	 * 	x$('a.globalnav').getStyle( 'background', function(prop){ prop == 'blue' ? 'green' : 'blue' });
+	 *
+	 */
     getStyle: function(prop, callback) {
-        // shortcut getComputedStyle function
-        var s = function(el, p) {
-            // this *can* be written to be smaller - see below, but in fact it doesn't compress in gzip as well, the commented
-            // out version actually *adds* 2 bytes.
-            // return document.defaultView.getComputedStyle(el, "").getPropertyValue(p.replace(/([A-Z])/g, "-$1").toLowerCase());
-            return document.defaultView.getComputedStyle(el, "").getPropertyValue(cssstyle(p));
-        }
-        if (callback === undefined) {
-        	var styles = [];
-            this.each(function(el) {styles.push(s(el, prop))});
- 			return styles;
-        } else this.each(function(el) { callback(s(el, prop)); });
+        return (callback === undefined) ?
+            
+            getStyle(this[0], prop) :
+            
+            this.each(function(el) {
+                callback(getStyle(el, prop));
+            });
     },
 
-/**
-	addClass
-	--------
-
-	Adds a class to all of the elements in the collection.
-
-	### syntax ###
-
-		x$( selector ).addClass( className );
-
-	### arguments ###
-
-	- className `String` is the name of the CSS class to add.
-
-	### example ###
-
-		x$('.foo').addClass('awesome');
-*/
+    /**
+	 *
+	 * Adds the classname to all the elements in the collection. 
+	 * 
+	 * @param {String} className The class name.
+	 * @return self
+	 * @example
+	 *
+	 * ### addClass
+	 *	
+	 * syntax:
+	 *
+	 * 	$(selector).addClass(className);
+	 * 
+	 * arguments:
+	 *
+	 * - className:string the name of the CSS class to apply
+	 *
+	 * example:
+	 * 
+	 * 	$('.foo').addClass('awesome');
+	 *
+	 */
     addClass: function(className) {
         return this.each(function(el) {
             if (hasClass(el, className) === false) {
@@ -1091,132 +1107,125 @@ xui.extend({
             }
         });
     },
-
-/**
-	hasClass
-	--------
-
-	Checks if the class is on _all_ elements in the xui collection.
-
-	### syntax ###
-
-		x$( selector ).hasClass( className, fn );
-
-	### arguments ###
-
-	- className `String` is the name of the CSS class to find.
-	- fn `Function` is a called for each element found and passed the element _(optional)_.
-
-			// `element` is the HTMLElement that has the class
-			function(element) {
-			    console.log(element);
-			}
-
-	### example ###
-        <div id="foo" class="foo awesome"></div>
-        <div class="foo awesome"></div>
-        <div class="foo"></div>
-        
-		// returns true
-		x$('#foo').hasClass('awesome');
-		
-		// returns false (not all elements with class 'foo' have class 'awesome'),
-		// but the callback gets invoked with the elements that did match the 'awesome' class
-		x$('.foo').hasClass('awesome', function(element) {
-		    console.log('Hey, I found: ' + element + ' with class "awesome"');
-		});
-		
-		// returns true (all DIV elements have the 'foo' class)
-		x$('div').hasClass('foo');
-*/
+    /**
+	 *
+	 * Checks to see if classname is one the element. If a callback isn't passed, hasClass expects only one element in collection
+	 * 
+	 * @param {String} className The class name.
+	 * @param {Function} callback A callback function (optional)
+	 * @return self if a callback is passed, otherwise true or false as to whether the element has the class
+	 * @example
+	 *
+	 * ### hasClass
+	 *	
+	 * syntax:
+	 *
+	 * 	$(selector).hasClass('className');
+	 * 	$(selector).hasClass('className', function(element) {});	 
+	 * 
+	 * arguments:
+	 *
+	 * - className:string the name of the CSS class to apply
+	 *
+	 * example:
+	 * 
+	 * 	$('#foo').hasClass('awesome'); // returns true or false
+	 * 	$('.foo').hasClass('awesome',function(e){}); // returns XUI object
+	 *
+	 */
     hasClass: function(className, callback) {
-        var self = this;
-        return this.length && (function() {
-                var hasIt = true;
-                self.each(function(el) {
-                    if (hasClass(el, className)) {
-                        if (callback) callback(el);
-                    } else hasIt = false;
-                });
-                return hasIt;
-            })();
+        return (callback === undefined && this.length == 1) ?
+            hasClass(this[0], className) :
+            this.length && this.each(function(el) {
+                if (hasClass(el, className)) {
+                    callback(el);
+                }
+            });
     },
 
-/**
-	removeClass
-	-----------
-
-	Removes the specified class from all elements in the collection. If no class is specified, removes all classes from the collection.
-
-	### syntax ###
-
-		x$( selector ).removeClass( className );
-
-	### arguments ###
-
-	- className `String` is the name of the CSS class to remove. If not specified, then removes all classes from the matched elements. _(optional)_
-
-	### example ###
-
-		x$('.foo').removeClass('awesome');
-*/
+    /**
+	 *
+	 * Removes the classname from all the elements in the collection. 
+	 * 
+	 * @param {String} className The class name.
+	 * @return self
+	 * @example
+	 *
+	 * ### removeClass
+	 *	
+	 * syntax:
+	 *
+	 * 	x$(selector).removeClass(className);
+	 * 
+	 * arguments:
+	 *
+	 * - className:string the name of the CSS class to remove.
+	 *
+	 * example:
+	 * 
+	 * 	x$('.bar').removeClass('awesome');
+	 * 
+	 */
     removeClass: function(className) {
-        if (className === undefined) this.each(function(el) { el.className = ''; });
-        else this.each(function(el) { el.className = trim(el.className.replace(getClassRegEx(className), '$1')); });
+        if (className === undefined) {
+            this.each(function(el) {
+                el.className = '';
+            });
+        } else {
+            var re = getClassRegEx(className);
+            this.each(function(el) {
+                el.className = el.className.replace(re, '$1');
+            });
+        }
         return this;
     },
 
-/**
-	toggleClass
-	-----------
 
-	Removes the specified class if it exists on the elements in the xui collection, otherwise adds it. 
-
-	### syntax ###
-
-		x$( selector ).toggleClass( className );
-
-	### arguments ###
-
-	- className `String` is the name of the CSS class to toggle.
-
-	### example ###
-        <div class="foo awesome"></div>
-        
-		x$('.foo').toggleClass('awesome'); // div above loses its awesome class.
-*/
-    toggleClass: function(className) {
-        return this.each(function(el) {
-            if (hasClass(el, className)) el.className = trim(el.className.replace(getClassRegEx(className), '$1'));
-            else el.className = trim(el.className + ' ' + className);
-        });
-    },
-    
-/**
-	css
-	---
-
-	Set multiple CSS properties at once.
-
-	### syntax ###
-
-		x$( selector ).css( properties );
-
-	### arguments ###
-
-	- properties `Object` is a JSON object that defines the property name/value pairs to set.
-
-	### example ###
-
-		x$('.foo').css({ backgroundColor:'blue', color:'white', border:'2px solid red' });
-*/
+    /**
+	 *
+	 * Set a number of CSS properties at once.
+	 * 
+	 * @param {Object} props An object literal of CSS properties and corosponding values.
+	 * @return self
+	 * @example	
+	 *
+	 * ### css
+	 *	
+	 * syntax: 
+	 *
+	 * 	x$(selector).css(object);
+	 *
+	 * arguments: 
+	 *
+	 * - an object literal of css key/value pairs to set.
+	 *
+	 * example:
+	 * 
+	 * 	x$('h2.fugly').css({ backgroundColor:'blue', color:'white', border:'2px solid red' });
+	 *  
+	 */
     css: function(o) {
         for (var prop in o) {
             this.setStyle(prop, o[prop]);
         }
         return this;
     }
+// --
 });
+
+function getStyle(el, p) {
+    // this *can* be written to be smaller - see below, but in fact it doesn't compress in gzip as well, the commented
+    // out version actually *adds* 2 bytes.
+    // return document.defaultView.getComputedStyle(el, "").getPropertyValue(p.replace(/([A-Z])/g, "-$1").toLowerCase());
+	if(document.defaultView && document.defaultView.getComputedStyle) //doesn't work with IE Mobile
+		return document.defaultView.getComputedStyle(el, "").getPropertyValue(p.replace(/[A-Z]/g, function(m){ return '-'+m.toLowerCase();}));
+	else if(el.currentStyle){ //alternative for IE Mob
+			p = p.replace(/\-(\w)/g, function (s, p1){
+			return p1.toUpperCase();
+		});
+		return el.currentStyle[p];
+	}
+}
 
 // RS: now that I've moved these out, they'll compress better, however, do these variables
 // need to be instance based - if it's regarding the DOM, I'm guessing it's better they're
@@ -1233,145 +1242,6 @@ var reClassNameCache = {},
         }
         return re;
     };
-/**
-	XHR
-	===
-
-	Everything related to remote network connections.
-
- */
-xui.extend({	
-/**
-	xhr
-	---
-
-	The classic `XMLHttpRequest` sometimes also known as the Greek God: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
-
-	### detail ###
-
-	This method has a few new tricks.
-
-	It is always invoked on an element collection and uses the behaviour of `html`.
-
-	If there is no callback, then the `responseText` will be inserted into the elements in the collection.
-
-	### syntax ###
-
-		x$( selector ).xhr( location, url, options )
-
-	or accept a url with a default behavior of inner:
-
-		x$( selector ).xhr( url, options );
-
-	or accept a url with a callback:
-	
-		x$( selector ).xhr( url, fn );
-
-	### arguments ###
-
-	- location `String` is the location to insert the `responseText`. See `html` for values.
-	- url `String` is where to send the request.
-	- fn `Function` is called on status 200 (i.e. success callback).
-	- options `Object` is a JSON object with one or more of the following:
-		- method `String` can be _get_, _put_, _delete_, _post_. Default is _get_.
-		- async `Boolean` enables an asynchronous request. Defaults to _false_.
-		- data `String` is a url encoded string of parameters to send.
-		- callback `Function` is called on status 200 (i.e. success callback).
-    - headers `Object` is a JSON object with key:value pairs that get set in the request's header set.
-
-	### response ###
-
-	- The response is available to the callback function as `this`.
-	- The response is not passed into the callback.
-	- `this.reponseText` will have the resulting data from the file.
-
-	### example ###
-
-		x$('#status').xhr('inner', '/status.html');
-		x$('#status').xhr('outer', '/status.html');
-		x$('#status').xhr('top',   '/status.html');
-		x$('#status').xhr('bottom','/status.html');
-		x$('#status').xhr('before','/status.html');
-		x$('#status').xhr('after', '/status.html');
-
-	or
-
-		// same as using 'inner'
-		x$('#status').xhr('/status.html');
-
-		// define a callback, enable async execution and add a request header
-		x$('#left-panel').xhr('/panel', {
-		    async: true,
-		    callback: function() {
-		        alert("The response is " + this.responseText);
-		    },
-        headers:{
-            'Mobile':'true'
-        }
-		});
-
-		// define a callback with the shorthand syntax
-		x$('#left-panel').xhr('/panel', function() {
-		    alert("The response is " + this.responseText);
-		});
-*/
-    xhr:function(location, url, options) {
-
-      // this is to keep support for the old syntax (easy as that)
-		if (!/^(inner|outer|top|bottom|before|after)$/.test(location)) {
-            options = url;
-            url = location;
-            location = 'inner';
-        }
-
-        var o = options ? options : {};
-        
-        if (typeof options == "function") {
-            // FIXME kill the console logging
-            // console.log('we been passed a func ' + options);
-            // console.log(this);
-            o = {};
-            o.callback = options;
-        };
-        
-        var that   = this,
-            req    = new XMLHttpRequest(),
-            method = o.method || 'get',
-            async  = (typeof o.async != 'undefined'?o.async:true),           
-            params = o.data || null,
-            key;
-
-        req.queryString = params;
-        req.open(method, url, async);
-
-        for (key in o.headers) {
-            if (o.headers.hasOwnProperty(key)) {
-              req.setRequestHeader(key, o.headers[key]);
-            }
-        }
-
-        // Set "X-Request-With" header
-        req.setRequestHeader('X-Request-With','XMLHttpRequest');
-
-        req.handleResp = (o.callback != null) ? o.callback : function() { that.html(location, req.responseText); };
-        req.handleError = (o.error && typeof o.error == 'function') ? o.error : function () {};
-        function hdl(){ 
-            if(req.readyState==4) {
-                delete(that.xmlHttpRequest);
-                if(req.status===0 || req.status==200) req.handleResp(); 
-                if((/^[45]/).test(req.status)) req.handleError();
-            }
-        }
-        if(async) {
-            req.onreadystatechange = hdl;
-            this.xmlHttpRequest = req;
-        }
-        req.send(params);
-        if(!async) hdl();
-
-        return this;
-    }
-});
 // emile.js (c) 2009 Thomas Fuchs
 // Licensed under the terms of the MIT license.
 
@@ -2491,6 +2361,102 @@ var posProcess = function(selector, context){
 window.Sizzle = Sizzle;
 
 })();
+/* Cross-Browser Split 1.0.1
+(c) Steven Levithan <stevenlevithan.com>; MIT License
+An ECMA-compliant, uniform cross-browser split method */
+
+var cbSplit;
+
+// avoid running twice, which would break `cbSplit._nativeSplit`'s reference to the native `split`
+if (!cbSplit) {
+
+cbSplit = function (str, separator, limit) {
+    // if `separator` is not a regex, use the native `split`
+    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
+        return cbSplit._nativeSplit.call(str, separator, limit);
+    }
+
+    var output = [],
+        lastLastIndex = 0,
+        flags = (separator.ignoreCase ? "i" : "") +
+                (separator.multiline  ? "m" : "") +
+                (separator.sticky     ? "y" : ""),
+        separator = RegExp(separator.source, flags + "g"), // make `global` and avoid `lastIndex` issues by working with a copy
+        separator2, match, lastIndex, lastLength;
+
+    str = str + ""; // type conversion
+    if (!cbSplit._compliantExecNpcg) {
+        separator2 = RegExp("^" + separator.source + "$(?!\\s)", flags); // doesn't need /g or /y, but they don't hurt
+    }
+
+    /* behavior for `limit`: if it's...
+    - `undefined`: no limit.
+    - `NaN` or zero: return an empty array.
+    - a positive number: use `Math.floor(limit)`.
+    - a negative number: no limit.
+    - other: type-convert, then use the above rules. */
+    if (limit === undefined || +limit < 0) {
+        limit = Infinity;
+    } else {
+        limit = Math.floor(+limit);
+        if (!limit) {
+            return [];
+        }
+    }
+
+    while (match = separator.exec(str)) {
+        lastIndex = match.index + match[0].length; // `separator.lastIndex` is not reliable cross-browser
+
+        if (lastIndex > lastLastIndex) {
+            output.push(str.slice(lastLastIndex, match.index));
+
+            // fix browsers whose `exec` methods don't consistently return `undefined` for nonparticipating capturing groups
+            if (!cbSplit._compliantExecNpcg && match.length > 1) {
+                match[0].replace(separator2, function () {
+                    for (var i = 1; i < arguments.length - 2; i++) {
+                        if (arguments[i] === undefined) {
+                            match[i] = undefined;
+                        }
+                    }
+                });
+            }
+
+            if (match.length > 1 && match.index < str.length) {
+                Array.prototype.push.apply(output, match.slice(1));
+            }
+
+            lastLength = match[0].length;
+            lastLastIndex = lastIndex;
+
+            if (output.length >= limit) {
+                break;
+            }
+        }
+
+        if (separator.lastIndex === match.index) {
+            separator.lastIndex++; // avoid an infinite loop
+        }
+    }
+
+    if (lastLastIndex === str.length) {
+        if (lastLength || !separator.test("")) {
+            output.push("");
+        }
+    } else {
+        output.push(str.slice(lastLastIndex));
+    }
+
+    return output.length > limit ? output.slice(0, limit) : output;
+};
+
+cbSplit._compliantExecNpcg = /()??/.exec("")[1] === undefined; // NPCG: nonparticipating capturing group
+cbSplit._nativeSplit = String.prototype.split;
+
+} // end `if (!cbSplit)`
+
+
+try {var a = "a".split(/a/)[0].nodeType;}
+catch(e){ String.prototype.split = function (separator, limit) { return cbSplit(this, separator, limit); }; }
 !function (context, doc) {
   var fns = [], ol, fn, f = false,
       testEl = doc.documentElement,

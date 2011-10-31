@@ -552,7 +552,7 @@ xui.extend({
     attr: function(attribute, val) {
         if (arguments.length == 2) {
             return this.each(function(el) {
-                if (el.tagName == 'input' && attribute == 'value') el.value = val;
+                if (el.tagName && el.tagName.toLowerCase() == 'input' && attribute == 'value') el.value = val;
                 else if (el.setAttribute) {
                   if (attribute == 'checked' && (val == '' || val == false || typeof val == "undefined")) el.removeAttribute(attribute);
                   else el.setAttribute(attribute, val);
@@ -561,9 +561,9 @@ xui.extend({
         } else {
             var attrs = [];
             this.each(function(el) {
-                if (el.tagName == 'input' && attribute == 'value') attrs.push(el.value);
-                else if (el.getAttribute) {
-                    attrs.push(el.getAttribute(attribute) || '');
+                if (el.tagName && el.tagName.toLowerCase() == 'input' && attribute == 'value') attrs.push(el.value);
+                else if (el.getAttribute && el.getAttribute(attribute)) {
+                    attrs.push(el.getAttribute(attribute));
                 }
             });
             return attrs;
@@ -1276,6 +1276,7 @@ xui.extend({
 		- method `String` can be _get_, _put_, _delete_, _post_. Default is _get_.
 		- async `Boolean` enables an asynchronous request. Defaults to _false_.
 		- data `String` is a url encoded string of parameters to send.
+                - error `Function` is called on error or status that is not 200. (i.e. failure callback).
 		- callback `Function` is called on status 200 (i.e. success callback).
     - headers `Object` is a JSON object with key:value pairs that get set in the request's header set.
 
@@ -1337,12 +1338,17 @@ xui.extend({
         var that   = this,
             req    = new XMLHttpRequest(),
             method = o.method || 'get',
-            async  = (typeof o.async != 'undefined'?o.async:true),           
+            async  = (typeof o.async != 'undefined'?o.async:true),
             params = o.data || null,
             key;
 
         req.queryString = params;
         req.open(method, url, async);
+
+        // Set "X-Requested-With" header
+        req.setRequestHeader('X-Requested-With','XMLHttpRequest');
+
+        if (method.toLowerCase() == 'post') req.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 
         for (key in o.headers) {
             if (o.headers.hasOwnProperty(key)) {
@@ -1350,12 +1356,9 @@ xui.extend({
             }
         }
 
-        // Set "X-Request-With" header
-        req.setRequestHeader('X-Request-With','XMLHttpRequest');
-
         req.handleResp = (o.callback != null) ? o.callback : function() { that.html(location, req.responseText); };
         req.handleError = (o.error && typeof o.error == 'function') ? o.error : function () {};
-        function hdl(){ 
+        function hdl(){
             if(req.readyState==4) {
                 delete(that.xmlHttpRequest);
                 if(req.status===0 || req.status==200) req.handleResp(); 

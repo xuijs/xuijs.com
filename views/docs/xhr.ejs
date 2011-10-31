@@ -40,7 +40,8 @@
 <ul>
 <li>method <code>String</code> can be <em>get</em>, <em>put</em>, <em>delete</em>, <em>post</em>. Default is <em>get</em>.</li>
 <li>async <code>Boolean</code> enables an asynchronous request. Defaults to <em>false</em>.</li>
-<li>data <code>String</code> is a url encoded string of parameters to send.</li>
+<li>data <code>String</code> is a url encoded string of parameters to send.
+       - error <code>Function</code> is called on error or status that is not 200. (i.e. failure callback).</li>
 <li>callback <code>Function</code> is called on status 200 (i.e. success callback).</li>
 <li>headers <code>Object</code> is a JSON object with key:value pairs that get set in the request's header set.</li>
 </ul></li>
