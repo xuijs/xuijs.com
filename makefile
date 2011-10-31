@@ -3,7 +3,7 @@ VERSION = `cat ./../xui/VERSION`
 deploy: update
 	git checkout -b deploy
 	git commit -am 'new deploy!'
-	git push joyent deploy:master
+	git push -f joyent deploy:master
 	git checkout master
 	git branch -D deploy
 	sed -i -e "s/${VERSION}/__VERSION__/g" views/downloads.html.ejs views/layout.ejs views/test.html.ejs
