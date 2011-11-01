@@ -176,7 +176,8 @@ xui.fn = xui.prototype = {
               ele = slice(ele);
             } else if (q instanceof Array) {
                 ele = q;
-            } else if (q.toString() == '[object NodeList]' || q.toString() == '[object HTMLCollection]') {
+            } else if (q.toString() == '[object NodeList]' ||
+q.toString() == '[object HTMLCollection]' || typeof q.length == 'number') {
                 ele = slice(q);
             } else if (q.nodeName || q === window) { // only allows nodes in
                 // an element was passed in
@@ -865,7 +866,7 @@ function _createResponder(element, eventName, handler) {
         if (handler.call(element, event) === false) {
             event.preventDefault();
             event.stopPropagation();
-        } 
+        }
     };
     
     responder.guid = handler.guid = handler.guid || ++_getEventID.id;
@@ -1063,7 +1064,7 @@ xui.extend({
         	var styles = [];
             this.each(function(el) {styles.push(s(el, prop))});
  			return styles;
-        } else this.each(function(el) { callback(s(el, prop)); });
+        } else return this.each(function(el) { callback(s(el, prop)); });
     },
 
 /**
