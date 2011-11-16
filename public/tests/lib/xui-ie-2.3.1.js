@@ -176,7 +176,8 @@ xui.fn = xui.prototype = {
               ele = slice(ele);
             } else if (q instanceof Array) {
                 ele = q;
-            } else if (q.toString() == '[object NodeList]' || q.toString() == '[object HTMLCollection]') {
+            } else if (q.toString() == '[object NodeList]' ||
+q.toString() == '[object HTMLCollection]' || typeof q.length == 'number') {
                 ele = slice(q);
             } else if (q.nodeName || q === window) { // only allows nodes in
                 // an element was passed in
@@ -506,7 +507,7 @@ xui.extend({
 	xhr
 	---
 
-	The classic `XMLHttpRequest` sometimes also known as the Greek God: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
+	The classic `XMLHttpRequest` sometimes also known as the Greek hero: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
 
 	### detail ###
 
@@ -868,6 +869,9 @@ function clean(collection) {
  * A good old fashioned event handling system.
  * 
  */
+xui.events = {}; var cache = {};
+var stockEvents = "click load submit touchstart touchmove touchend touchcancel gesturestart gesturechange gestureend orientationchange".split(' ');
+var ieEvents = "click load submit blur change focus keydown keypress keyup mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup mousewheel resize scroll select unload".split(' ');
 xui.extend({
 	
 	
@@ -908,60 +912,63 @@ xui.extend({
 	 *  	});
 	 * 	
 	 */
-	
-	touch: eventSupported('ontouchstart'),
-	
-	
-	
-	on: function(type, fn) {
-        return this.each(function (el) {
-            if (window.addEventListener) 
-                el.addEventListener(type, _createResponder(el, type, fn), false);
-            else 
-                el.attachEvent('on' + type, fn);
-			
-        });
+	on: function(type, fn, details) {
+      return this.each(function (el) {
+        el.attachEvent('on' + type, _createResponder(el, type, fn));
+      });
     },
 
-    un: function(type) {
-        var that = this;
-        return this.each(function (el) {
-            var id = _getEventID(el), responders = _getRespondersForEvent(id, type), i = responders.length;
+    un: function(type, fn) {
+      return this.each(function (el) {
+          var id = _getEventID(el), responders = _getRespondersForEvent(id, type), i = responders.length;
 
-            while (i--) {
-                el.removeEventListener(type, responders[i], false);
+          while (i--) {
+            if (fn === undefined || fn.guid === responders[i].guid) {
+              el.detachEvent('on'+type, responders[i]);
+              removex(cache[id][type], i, 1);
             }
-
-            delete cache[id];
-  	    });
+          }
+          if (cache[id][type].length === 0) delete cache[id][type];
+          for (var t in cache[id]) {
+              return;
+          }
+          delete cache[id];
+      });
   	},
 
   	fire: function (type, data) {
-        return this.each(function (el) {
-            if (el == document && !el.dispatchEvent)
-                el = document.documentElement;
+      return this.each(function (el) {
+        if (el == document && !el.fireEvent)
+            el = document.documentElement;
 
-            var event = document.createEvent('HTMLEvents');
-            event.initEvent(type, true, true);
-            event.data = data || {};
-            event.eventName = type;
-            
-            el.dispatchEvent(event);
-  	    });
+        var event = document.createEventObject();
+        event.data = data || {};
+        event.eventName = type;
+        if (ieEvents.indexOf(type) > -1)
+          el.fireEvent("on" + type, event);
+        else {
+          var responders = _getRespondersForEvent(_getEventID(el), type);
+          responders.forEach(function(r) {
+            r.call(el);
+          });
+        }
+      });
   	}
   
 // --
 });
 
-function eventSupported(event) {
-    var element = document.createElement('i');
-    return event in element || element.setAttribute && element.setAttribute(event, "return;") || false;
-}
+stockEvents.forEach(function (event) {
+  xui.fn[event] = function(action) { return function (fn) { return fn ? this.on(action, fn) : this.fire(action); }; }(event);
+});
 
+xui.ready = function(handler) {
+  domReady(handler);
+}
 // lifted from Prototype's (big P) event model
 function _getEventID(element) {
-    if (element._xuiEventID) return element._xuiEventID[0];
-    return element._xuiEventID = [++_getEventID.id];
+    if (element._xuiEventID) return element._xuiEventID;
+    return element._xuiEventID = ++_getEventID.id;
 }
 
 _getEventID.id = 1;
@@ -978,8 +985,9 @@ function _createResponder(element, eventName, handler) {
         if (handler.call(element, event) === false) {
             event.preventDefault();
             event.stopPropagation();
-        } 
+        }
     };
+    responder.guid = handler.guid = handler.guid || ++_getEventID.id;
     responder.handler = handler;
     r.push(responder);
     return responder;
@@ -1035,6 +1043,7 @@ xui.extend({
 	 * 
 	 */
     setStyle: function(prop, val) {
+        prop = domstyle(prop);
         return this.each(function(el) {
             el.style[prop] = val;
         });
@@ -1068,13 +1077,15 @@ xui.extend({
 	 *
 	 */
     getStyle: function(prop, callback) {
-        return (callback === undefined) ?
-            
-            getStyle(this[0], prop) :
-            
-            this.each(function(el) {
-                callback(getStyle(el, prop));
-            });
+      if (callback === undefined) {
+        var styles = [];
+        this.each(function(el) {
+          styles.push(getStyle(el, prop));
+        });
+        return styles;
+      } else return this.each(function(el) {
+               callback(getStyle(el, prop));
+             });
     },
 
     /**
@@ -1101,10 +1112,13 @@ xui.extend({
 	 *
 	 */
     addClass: function(className) {
+        var cs = className.split(' ');
         return this.each(function(el) {
-            if (hasClass(el, className) === false) {
-              el.className = trim(el.className + ' ' + className);
-            }
+            cs.forEach(function(clazz) {
+              if (hasClass(el, clazz) === false) {
+                el.className = trim(el.className + ' ' + clazz);
+              }
+            });
         });
     },
     /**
@@ -1134,15 +1148,20 @@ xui.extend({
 	 *
 	 */
     hasClass: function(className, callback) {
-        return (callback === undefined && this.length == 1) ?
-            hasClass(this[0], className) :
-            this.length && this.each(function(el) {
-                if (hasClass(el, className)) {
-                    callback(el);
-                }
-            });
+      var self = this,
+          cs = className.split(' ');
+      return this.length && (function() {
+              var hasIt = true;
+              self.each(function(el) {
+                cs.forEach(function(clazz) {
+                  if (hasClass(el, clazz)) {
+                      if (callback) callback(el);
+                  } else hasIt = false;
+                });
+              });
+              return hasIt;
+          })();
     },
-
     /**
 	 *
 	 * Removes the classname from all the elements in the collection. 
@@ -1167,19 +1186,26 @@ xui.extend({
 	 * 
 	 */
     removeClass: function(className) {
-        if (className === undefined) {
-            this.each(function(el) {
-                el.className = '';
+        if (className === undefined) this.each(function(el) { el.className = ''; });
+        else {
+          var cs = className.split(' ');
+          this.each(function(el) {
+            cs.forEach(function(clazz) {
+              el.className = trim(el.className.replace(getClassRegEx(clazz), '$1'));
             });
-        } else {
-            var re = getClassRegEx(className);
-            this.each(function(el) {
-                el.className = el.className.replace(re, '$1');
-            });
+          });
         }
         return this;
     },
-
+    toggleClass: function(className) {
+        var cs = className.split(' ');
+        return this.each(function(el) {
+            cs.forEach(function(clazz) {
+              if (hasClass(el, clazz)) el.className = trim(el.className.replace(getClassRegEx(clazz), '$1'));
+              else el.className = trim(el.className + ' ' + clazz);
+            });
+        });
+    },
 
     /**
 	 *
