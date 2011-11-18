@@ -840,7 +840,6 @@ xui.touch = (function () {
     xui.ready(function() {
       console.log('ready, set, go!');
     });
-
 */
 xui.ready = function(handler) {
   domReady(handler);
@@ -1062,8 +1061,8 @@ xui.extend({
         }
         if (callback === undefined) {
         	var styles = [];
-            this.each(function(el) {styles.push(s(el, prop))});
- 			return styles;
+          this.each(function(el) {styles.push(s(el, prop))});
+          return styles;
         } else return this.each(function(el) { callback(s(el, prop)); });
     },
 
@@ -1086,10 +1085,13 @@ xui.extend({
 		x$('.foo').addClass('awesome');
 */
     addClass: function(className) {
+        var cs = className.split(' ');
         return this.each(function(el) {
-            if (hasClass(el, className) === false) {
-              el.className = trim(el.className + ' ' + className);
-            }
+            cs.forEach(function(clazz) {
+              if (hasClass(el, clazz) === false) {
+                el.className = trim(el.className + ' ' + clazz);
+              }
+            });
         });
     },
 
@@ -1131,13 +1133,16 @@ xui.extend({
 		x$('div').hasClass('foo');
 */
     hasClass: function(className, callback) {
-        var self = this;
+        var self = this,
+            cs = className.split(' ');
         return this.length && (function() {
                 var hasIt = true;
                 self.each(function(el) {
-                    if (hasClass(el, className)) {
+                  cs.forEach(function(clazz) {
+                    if (hasClass(el, clazz)) {
                         if (callback) callback(el);
                     } else hasIt = false;
+                  });
                 });
                 return hasIt;
             })();
@@ -1163,7 +1168,14 @@ xui.extend({
 */
     removeClass: function(className) {
         if (className === undefined) this.each(function(el) { el.className = ''; });
-        else this.each(function(el) { el.className = trim(el.className.replace(getClassRegEx(className), '$1')); });
+        else {
+          var cs = className.split(' ');
+          this.each(function(el) {
+            cs.forEach(function(clazz) {
+              el.className = trim(el.className.replace(getClassRegEx(clazz), '$1'));
+            });
+          });
+        }
         return this;
     },
 
@@ -1187,9 +1199,12 @@ xui.extend({
 		x$('.foo').toggleClass('awesome'); // div above loses its awesome class.
 */
     toggleClass: function(className) {
+        var cs = className.split(' ');
         return this.each(function(el) {
-            if (hasClass(el, className)) el.className = trim(el.className.replace(getClassRegEx(className), '$1'));
-            else el.className = trim(el.className + ' ' + className);
+            cs.forEach(function(clazz) {
+              if (hasClass(el, clazz)) el.className = trim(el.className.replace(getClassRegEx(clazz), '$1'));
+              else el.className = trim(el.className + ' ' + clazz);
+            });
         });
     },
     
@@ -1246,7 +1261,7 @@ xui.extend({
 	xhr
 	---
 
-	The classic `XMLHttpRequest` sometimes also known as the Greek God: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
+	The classic `XMLHttpRequest` sometimes also known as the Greek hero: _Ajax_. Not to be confused with _AJAX_ the cleaning agent.
 
 	### detail ###
 
