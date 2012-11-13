@@ -8,10 +8,10 @@
     "lib": ""
   },
   "engines": {
-    "node": "*"
+    "node": "v0.8.x"
   },
   "dependencies":{
-    "express":"",
+    "express":"2.x",
     "ejs":""
   }
 }

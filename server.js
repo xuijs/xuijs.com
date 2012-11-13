@@ -1,6 +1,5 @@
 var app = require('./config').app
-,   port = process.env.PORT || 4000
-
+,   port = process.env.PORT || 4000;
 
 
 app.get('/', function (req, res) {
