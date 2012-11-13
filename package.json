@@ -10,8 +10,16 @@
   "engines": {
     "node": "v0.8.x"
   },
-  "dependencies":{
-    "express":"2.x",
-    "ejs":""
-  }
+  "dependencies": {
+    "express": "2.x",
+    "ejs": ""
+  },
+  "scripts": {
+    "start": "server.js"
+  },
+  "subdomain": "xuijs",
+  "domains": [
+    "xuijs.com",
+    "www.xuijs.com"
+  ]
 }
